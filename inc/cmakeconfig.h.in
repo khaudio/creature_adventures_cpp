@@ -1,0 +1,5 @@
+/* The configured options and settings for spatulastic */
+
+#define creature_adventures_VERSION_MAJOR      @creature_adventures_VERSION_MAJOR@
+#define creature_adventures_VERSION_MINOR      @creature_adventures_VERSION_MINOR@
+

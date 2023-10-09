@@ -3,7 +3,7 @@
 namespace CreatureAdventures
 {
 
-Item::Item(int uidNum, int tierNum, int maxPossibleValue, bool isPersistent) :
+Item::Item(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent) :
 TieredObjectBase(uidNum, tierNum),
 persistent(isPersistent)
 {
@@ -18,71 +18,58 @@ Item::~Item()
 {
 }
 
-int Item::get()
+float Item::get()
 {
     return this->value;
 }
 
 std::vector<std::string> Item::get_description_list()
 {
-    return this->descriptionList;
+    return this->additionalEffects;
 }
 
-Potion::Potion(int uidNum, int tierNum, int maxPossibleValue, bool isPersistent) :
+Potion::Potion(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent) :
 Item(uidNum, tierNum, maxPossibleValue, isPersistent)
 {
-    std::stringstream stream;
-    stream << "Heal a creature for " << this->value << " HP";
-    this->descriptionList.emplace_back(stream.str());
 }
 
 Potion::~Potion()
 {
 }
 
-Poison::Poison(int uidNum, int tierNum, int maxPossibleValue, bool isPersistent) :
+Poison::Poison(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent) :
 Item(uidNum, tierNum, maxPossibleValue, isPersistent)
 {
-    std::stringstream stream;
-    stream << "Damage a creature for " << this->value << " HP";
-    this->descriptionList.emplace_back(stream.str());
-    this->descriptionList.emplace_back("Ignores defense");
+    this->additionalEffects.emplace_back("Ignores defense");
 }
 
 Poison::~Poison()
 {
 }
 
-Elixir::Elixir(int uidNum, int tierNum, int maxPossibleValue, bool isPersistent) :
+Elixir::Elixir(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent) :
 Item(uidNum, tierNum, maxPossibleValue, isPersistent)
 {
-    std::stringstream stream;
-    stream << "Raise attack power of a creature by " << this->value;
-    this->descriptionList.emplace_back(stream.str());
-    this->descriptionList.emplace_back("Lasts until end of battle");
+    this->additionalEffects.emplace_back("Lasts until end of battle");
 }
 
 Elixir::~Elixir()
 {
 }
 
-Revive::Revive(int uidNum, int tierNum, int maxPossibleValue, bool isPersistent) :
+Revive::Revive(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent) :
 Item(uidNum, tierNum, maxPossibleValue, isPersistent)
 {
-    this->descriptionList.emplace_back("Revive a creature with 0 HP");
 }
 
 Revive::~Revive()
 {
 }
 
-Bait::Bait(int uidNum, int tierNum, int maxPossibleValue, bool isPersistent) :
+Bait::Bait(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent) :
 Item(uidNum, tierNum, maxPossibleValue, isPersistent)
 {
-    std::stringstream stream;
-    stream << "Raises chances of catching wild creature by " << this->value;
-    this->descriptionList.emplace_back(stream.str());
-    this->descriptionList.emplace_back("Lasts until end of battle");
+    this->additionalEffects.emplace_back("Lasts until end of battle");
 }
 
 Bait::~Bait()

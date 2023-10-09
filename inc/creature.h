@@ -6,7 +6,7 @@
 namespace CreatureAdventures
 {
 
-extern class Action;
+class Action;
 
 class ModifierBase
 {
@@ -35,9 +35,9 @@ class CreatureModifier : public ModifierBase
 
 public:
 
-    int attackModifier;
-    int defenseModifier;
-    int hpModifier;
+    float attackModifier;
+    float defenseModifier;
+    float hpModifier;
 
 public:
 
@@ -51,9 +51,9 @@ class CreatureBase : public TieredObjectBase
 
 public:
 
-    int baseAttack;
-    int baseDefense;
-    int baseMaxHP;
+    float baseAttack;
+    float baseDefense;
+    float baseMaxHP;
 
 public:
 
@@ -71,13 +71,13 @@ public:
     std::string baseName;
     std::string nickname;
 
-    int attackModifier = 0;
-    int defenseModifier = 0;
-    int hpModifier = 0;
+    float attackModifier = 0;
+    float defenseModifier = 0;
+    float hpModifier = 0;
 
 protected:
 
-    int _currentHP;
+    float _currentHP;
 
 public:
 
@@ -86,22 +86,25 @@ public:
 
 public:
 
-    Creature(std::string playerName);
+    Creature();
     ~Creature();
 
-    void _set_permanent_attack(int value);
-    int _get_permanent_attack();
-    int get_attack();
+    void set_owner(std::string ownerName);
+    std::string get_owner();
+
+    void _set_permanent_attack(float value);
+    float _get_permanent_attack();
+    float get_attack();
     
-    void _set_permanent_defense(int value);
-    int _get_permanent_defense();
-    int get_defense();
+    void _set_permanent_defense(float value);
+    float _get_permanent_defense();
+    float get_defense();
     
-    void set_max_hp(int value);
-    int get_max_hp();
+    void set_max_hp(float value);
+    float get_max_hp();
     
-    void set_hp(int value);
-    int get_hp();
+    void set_hp(float value);
+    float get_hp();
     
     void set_name(std::string nameStr);
     std::string name();
@@ -109,7 +112,7 @@ public:
     void add_modifier(ModifierBase modifier);
     void remove_modifier(ModifierBase modifier);
 
-    void heal(int additionalHP = 0);
+    void heal(float additionalHP);
 
 };
 

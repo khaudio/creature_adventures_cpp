@@ -6,8 +6,6 @@
 #include <utility>
 #include <map>
 
-#include "datatypes.h"
-
 namespace CreatureAdventures
 {
 
@@ -17,7 +15,7 @@ class TieredObjectBase
 public:
 
     /* Names for each tier, indicating quality */
-    const std::vector<std::string> tierNames = {
+    constexpr static const std::vector<std::string> tierNames = {
             "Common",
             "Uncommon",
             "Rare",
@@ -27,7 +25,7 @@ public:
 
     /* Relative ratios of how many objects of each tier should be created.
     No Legendary objects by default */
-    const std::vector<FLOAT_DATATYPE> tierVolumeRatios = {
+    constexpr static const std::vector<float> tierVolumeRatios = {
             0.56,
             0.26,
             0.12,
@@ -36,13 +34,17 @@ public:
         };
 
     /* Relative ratios of stat points available to items in each tier */
-    const std::vector<std::pair<FLOAT_DATATYPE, FLOAT_DATATYPE>> tierQualityThresholds = {
+    constexpr static const std::vector<std::pair<float, float>> tierQualityThresholds = {
             {0.50, 0.56},
             {0.56, 0.63},
             {0.63, 0.70},
             {0.70, 0.80},
             {0.80, 1.00}
         };
+    
+    constexpr static const int numTiers = 5;
+
+public:
 
     int uid;
     int tier;

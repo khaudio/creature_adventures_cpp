@@ -11,16 +11,8 @@ class Item : public TieredObjectBase
 
 public:
 
-    /* Item name */
-    std::string name;
-
-    /* Item description */
-    std::string description;
-
-    std::vector<std::string> descriptionList;
-
     /* Relative ratios of stat points available to items in each tier */
-    const std::vector<std::pair<FLOAT_DATATYPE, FLOAT_DATATYPE>> tierQualityThresholds = {
+    constexpr static const std::vector<std::pair<float, float>> tierQualityThresholds = {
             {0.22, 0.22},
             {0.34, 0.34},
             {0.67, 0.67},
@@ -28,18 +20,29 @@ public:
             {1.00, 1.00}
         };
 
+public:
+
+    /* Item name */
+    std::string name;
+
+    /* Item description */
+    std::string description;
+
+    std::vector<std::string> additionalEffects;
+
+
     /* Whether itme is persistent after use */
     bool persistent;
 
-    /* Positive or negative integer */
-    int value;
+    /* Positive or negative float */
+    float value;
 
 public:
 
-    Item(int uidNum, int tierNum, int maxPossibleValue, bool isPersistent = false);
+    Item(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent = false);
     ~Item();
 
-    virtual int get();
+    virtual float get();
     virtual std::vector<std::string> get_description_list();
 
 };
@@ -54,7 +57,7 @@ public:
 
 public:
 
-    Potion(int uidNum, int tierNum, int maxPossibleValue, bool isPersistent = false);
+    Potion(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent = false);
     ~Potion();
 
 };
@@ -69,7 +72,7 @@ public:
 
 public:
 
-    Poison(int uidNum, int tierNum, int maxPossibleValue, bool isPersistent = false);
+    Poison(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent = false);
     ~Poison();
 
 };
@@ -84,7 +87,7 @@ public:
 
 public:
 
-    Elixir(int uidNum, int tierNum, int maxPossibleValue, bool isPersistent = false);
+    Elixir(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent = false);
     ~Elixir();
 
 };
@@ -99,7 +102,7 @@ public:
 
 public:
 
-    Revive(int uidNum, int tierNum, int maxPossibleValue, bool isPersistent = false);
+    Revive(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent = false);
     ~Revive();
 
 };
@@ -114,7 +117,7 @@ public:
 
 public:
 
-    Bait(int uidNum, int tierNum, int maxPossibleValue, bool isPersistent = false);
+    Bait(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent = false);
     ~Bait();
 
 };

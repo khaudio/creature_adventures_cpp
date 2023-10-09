@@ -14,6 +14,10 @@ list(APPEND LIBRARIES)
 
 add_executable(${PROJECT_NAME}
     src/tieredobjectbase.cpp
+    src/item.cpp
+    src/creature.cpp
+    src/action.cpp
+    src/dice.cpp
     src/core.cpp
     src/main.cpp
 )

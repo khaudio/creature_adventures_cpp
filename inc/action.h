@@ -27,7 +27,7 @@ public:
     ~ActionBase();
 
     virtual void run();
-    std::pair<int, int> get();
+    std::pair<float, float> get();
 
 };
 
@@ -41,9 +41,9 @@ class Action : public ActionBase
 public:
 
     /* HP gained or lost for each creature.
-    Can be a positive or negative integer */
-    int invokerHPDelta = 0;
-    int targetHPDelta = 0;
+    Can be a positive or negative float */
+    float invokerHPDelta = 0;
+    float targetHPDelta = 0;
 
     /* Did invoker successfully complete an evasive maneuver */
     bool evasive;
@@ -59,25 +59,25 @@ public:
     /* Modifies target creature's HP.
     Positive values add HP (heal),
     negative values remove HP (damage) */
-    void offset_target_hp(int targetHPOffset);
+    void offset_target_hp(float targetHPOffset);
 
     /* Modifies action invoking creature's HP.
     Positive values add HP (heal),
     negative values remove HP (damage) */
-    void offset_invoker_hp(int invokerHPOffset);
+    void offset_invoker_hp(float invokerHPOffset);
     
     /* Takes positive value as argument
     and applies it as a negative hp offset
     to target (damage) */
-    void damage_target(int targetHPLost);
+    void damage_target(float targetHPLost);
 
     /* Takes positive value as argument
     and applies it as a negative hp offset
     to invoker (damage) */
-    void damage_invoker(int invokerHPLost);
+    void damage_invoker(float invokerHPLost);
     
     /* Return hp deltas to be processed */
-    std::pair<int, int> get();
+    std::pair<float, float> get();
 
 };
 

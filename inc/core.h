@@ -11,7 +11,7 @@ class CoreBase : public TieredObjectBase
 
 public:
 
-    CoreBase();
+    CoreBase(int uidNum, int tierNum);
     ~CoreBase();
 
 };

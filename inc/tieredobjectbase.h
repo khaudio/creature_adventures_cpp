@@ -49,7 +49,7 @@ public:
 
 public:
 
-    TieredObjectBase();
+    TieredObjectBase(int uidNum, int tierNum);
     ~TieredObjectBase();
 
     std::string tier_name(int index) const;

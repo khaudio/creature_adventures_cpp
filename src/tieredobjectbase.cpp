@@ -3,7 +3,9 @@
 namespace CreatureAdventures
 {
 
-TieredObjectBase::TieredObjectBase()
+TieredObjectBase::TieredObjectBase(int uidNum, int tierNum) :
+uid(uidNum),
+tier(tierNum)
 {
 }
 

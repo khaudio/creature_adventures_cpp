@@ -15,7 +15,7 @@ class Item : public TieredObjectBase
 public:
 
     /* Relative ratios of stat points available to items in each tier */
-    constexpr static const std::vector<std::pair<float, float>> tierQualityThresholds = {
+    inline static const std::vector<std::pair<float, float>> tierQualityThresholds = {
             {0.22f, 0.22f},
             {0.34f, 0.34f},
             {0.67f, 0.67f},

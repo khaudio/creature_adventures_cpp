@@ -20,7 +20,7 @@ Deck::Deck(const Deck& ref)
     }
 }
 
-void Deck::_sequence_uids(std::vector<TieredObjectBase>* iterable, int index)
+void Deck::_sequence_uids(std::vector<Creature>* iterable, int index)
 {
     size_t length(iterable->size());
     for (int i(index); i < length; ++i)
@@ -39,9 +39,9 @@ void Deck::shuffle()
     std::shuffle(this->begin(), this->end(), this->_randDevice);
 }
 
-TieredObjectBase Deck::draw()
+Creature Deck::draw()
 {
-    TieredObjectBase drawn(this->back());
+    Creature drawn(this->back());
     this->pop_back();
     return drawn;
 }

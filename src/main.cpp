@@ -11,7 +11,10 @@ int main(int argc, char** argv)
 
     for (const auto& card: creatureDeck)
     {
-        std::cout << Creature::tierNames[card.tier] << '\n';
+        std::cout << Creature::tierNames[card.tier] << '\t';
+        std::cout << card.baseAttack << '\t';
+        std::cout << card.baseDefense << '\t';
+        std::cout << card.baseMaxHP << '\n';
     }
     
     return 0;

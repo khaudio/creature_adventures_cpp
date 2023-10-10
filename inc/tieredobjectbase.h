@@ -35,7 +35,7 @@ class TieredObjectBase
 public:
 
     /* Names for each tier, indicating quality */
-    constexpr static const std::vector<std::string> tierNames = {
+    inline static const std::vector<std::string> tierNames = {
             "Common",
             "Uncommon",
             "Rare",
@@ -45,7 +45,7 @@ public:
 
     /* Relative ratios of how many objects of each tier should be created.
     No Legendary objects by default */
-    constexpr static const std::vector<float> tierVolumeRatios = {
+    inline static const std::vector<float> tierVolumeRatios = {
             0.56f,
             0.26f,
             0.12f,
@@ -54,7 +54,7 @@ public:
         };
 
     /* Relative ratios of stat points available to items in each tier */
-    constexpr static const std::vector<std::pair<float, float>> tierQualityThresholds = {
+    inline static const std::vector<std::pair<float, float>> tierQualityThresholds = {
             {0.50f, 0.56f},
             {0.56f, 0.63f},
             {0.63f, 0.70f},
@@ -76,7 +76,7 @@ public:
     
     ~TieredObjectBase();
 
-    constexpr static std::string tier_name(int index)
+    static std::string tier_name(int index)
     {
         return tierNames[index];
     }

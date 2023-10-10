@@ -10,7 +10,7 @@
 namespace CreatureAdventures
 {
 
-class Deck : public std::vector<TieredObjectBase>
+class Deck : public std::vector<Creature>
 {
 
 protected:
@@ -26,13 +26,13 @@ public:
 
 protected:
 
-    void _sequence_uids(std::vector<TieredObjectBase>* iterable, int index = 1);
+    void _sequence_uids(std::vector<Creature>* iterable, int index = 1);
 
 public:
 
     void reset_uids(int index = 1);
     void shuffle();
-    TieredObjectBase draw();
+    Creature draw();
 
     // inline Deck operator+(const Deck& other) const
     // {

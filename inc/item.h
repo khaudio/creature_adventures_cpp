@@ -15,24 +15,33 @@ class Item : public TieredObjectBase
 public:
 
     /* Relative ratios of stat points available to items in each tier */
-    inline static const std::vector<std::pair<float, float>> tierQualityThresholds = {
+    static constexpr const std::array<std::pair<float, float>, 5> tierQualityThresholds = {{
             {0.22f, 0.22f},
             {0.34f, 0.34f},
             {0.67f, 0.67f},
             {0.80f, 0.80f},
             {1.00f, 1.00f}
+        }};
+
+    /* Names of each item type */
+    static constexpr const std::array<const char*, 5> itemTypes = {
+            "Potion",
+            "Poison",
+            "Elixir",
+            "Revive",
+            "Bait"
         };
+
+    /* Item name */
+    static constexpr const char* name = "";
+
+    /* Item description */
+    static constexpr const char* description = "";
 
 public:
 
-    /* Item name */
-    std::string name;
-
-    /* Item description */
-    std::string description;
-
-    std::vector<std::string> additionalEffects;
-
+    /* Item type index; i.e., Potion, Poision, Elixir, etc. */
+    int itemTypeIndex;
 
     /* Whether itme is persistent after use */
     bool persistent;
@@ -40,13 +49,23 @@ public:
     /* Positive or negative float */
     float value;
 
+    std::vector<const char*> additionalEffects;
+
 public:
 
-    Item(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent = false);
+    Item(
+            int uidNum,
+            int tierNum,
+            int itemType,
+            float maxPossibleValue,
+            bool isPersistent = false
+        );
+    Item(const Item& ref);
+
     ~Item();
 
     virtual float get();
-    virtual std::vector<std::string> get_description_list();
+    virtual std::vector<const char*> get_additional_effects();
 
 };
 
@@ -55,12 +74,14 @@ class Potion: public Item
 
 public:
 
-    std::string name = "Potion";
-    std::string description = "Heals a creature for a specified amount";
+    static constexpr const char* name = "Potion";
+    static constexpr const char* description = "Heals a creature for a specified amount";
 
 public:
 
     Potion(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent = false);
+    Potion(const Potion& ref);
+
     ~Potion();
 
 };
@@ -70,8 +91,8 @@ class Poison: public Item
 
 public:
 
-    std::string name = "Poison";
-    std::string description = "Poisons an enemy creature for unmitigated damage";
+    static constexpr const char* name = "Poison";
+    static constexpr const char* description = "Poisons an enemy creature for unmitigated damage";
 
 public:
 
@@ -85,8 +106,8 @@ class Elixir: public Item
 
 public:
 
-    std::string name = "Elixir";
-    std::string description = "Raises attack or defense power of a creature";
+    static constexpr const char* name = "Elixir";
+    static constexpr const char* description = "Raises attack or defense power of a creature";
 
 public:
 
@@ -100,8 +121,8 @@ class Revive: public Item
 
 public:
 
-    std::string name = "Revive";
-    std::string description = "Revives a creature with depleted HP";
+    static constexpr const char* name = "Revive";
+    static constexpr const char* description = "Revives a creature with depleted HP";
 
 public:
 
@@ -115,8 +136,8 @@ class Bait: public Item
 
 public:
 
-    std::string name = "Bait";
-    std::string description = "Raises chances of successfully catching wild creatures";
+    static constexpr const char* name = "Bait";
+    static constexpr const char* description = "Raises chances of successfully catching wild creatures";
 
 public:
 

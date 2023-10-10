@@ -3,45 +3,48 @@
 namespace CreatureAdventures
 {
 
-Deck::Deck()
+template <typename T>
+Deck<T>::Deck() :
+std::vector<T>()
 {
 }
 
-Deck::~Deck()
+template <typename T>
+Deck<T>::~Deck()
 {
 }
 
-Deck::Deck(const Deck& ref)
+template <typename T>
+Deck<T>::Deck(const Deck& ref) :
+std::vector<T>(ref)
 {
-    reserve(ref.size());
-    for (const auto& card: ref)
+}
+
+template <typename T>
+void Deck<T>::_sequence_uids(Deck<T>* deck, int length, int index)
+{
+    for (int i(0); i < length; ++i)
     {
-        this->emplace_back(card);
+        deck->at(i).uid = index++;
     }
 }
 
-void Deck::_sequence_uids(std::vector<Creature>* iterable, int index)
-{
-    size_t length(iterable->size());
-    for (int i(index); i < length; ++i)
-    {
-        iterable->at(i).uid = i;
-    }
-}
-
-void Deck::reset_uids(int index)
+template <typename T>
+void Deck<T>::reset_uids(int index)
 {
     _sequence_uids(this, index);
 }
 
-void Deck::shuffle()
+template <typename T>
+void Deck<T>::shuffle()
 {
     std::shuffle(this->begin(), this->end(), this->_randDevice);
 }
 
-Creature Deck::draw()
+template <typename T>
+T Deck<T>::draw()
 {
-    Creature drawn(this->back());
+    T drawn(this->back());
     this->pop_back();
     return drawn;
 }
@@ -104,12 +107,12 @@ Creature DeckBuilder::create_creature(
     return newCreature;
 }
 
-Deck DeckBuilder::create_creature_deck(
+Deck<Creature> DeckBuilder::create_creature_deck(
         int totalNumCards,
         float maxPossibleStatPoints
     )
 {
-    Deck deck;
+    Deck<Creature> deck;
     deck.reserve(totalNumCards);
 
     /* Calculate nubmer of cards per tier */
@@ -154,5 +157,28 @@ Deck DeckBuilder::create_creature_deck(
     return deck;
 };
 
-};
+Deck<Item> DeckBuilder::create_single_item_deck(
+        int itemType,
+        int totalNumCards,
+        float maxPossibleStatPoints
+    )
+{
+    Deck<Item> deck;
 
+    deck.emplace_back(Potion(0, 0, maxPossibleStatPoints, false));
+    deck.emplace_back(Poison(1, 1, maxPossibleStatPoints, false));
+
+    return deck;
+}
+
+// Deck<Item> DeckBuilder::create_item_deck(
+//         int totalNumCards,
+//         float maxPossibleStatPoints
+//     )
+// {
+//     Deck<Item> itemDeck = create_single_item_deck(0, 2, 30.0f);
+
+//     return itemDeck;
+// }
+
+};

@@ -10,7 +10,8 @@
 namespace CreatureAdventures
 {
 
-class Deck : public std::vector<Creature>
+template <typename T>
+class Deck : public std::vector<T>
 {
 
 protected:
@@ -26,25 +27,66 @@ public:
 
 protected:
 
-    void _sequence_uids(std::vector<Creature>* iterable, int index = 1);
+    virtual void _sequence_uids(Deck<T>* deck, int length, int index = 1);
 
 public:
 
-    void reset_uids(int index = 1);
-    void shuffle();
-    Creature draw();
+    virtual void reset_uids(int index = 1);
+    virtual void shuffle();
+    virtual T draw();
 
-    // inline Deck operator+(const Deck& other) const
-    // {
-    //     *this += other;
-    //     return this;
-    // }
-    
-    // inline Deck operator-(const Deck& other) const
-    // {
-    //     *this -= other;
-    //     return this;
-    // }
+    /* Add decks together and reset UIDs */
+    friend Deck<T> operator+(const Deck<T>& left, const Deck<T>& right)
+    {
+        Deck<T> deck;
+        int length(left.size() + right.size());
+        deck.reserve(length);
+        for (const auto& card: left) deck.emplace_back(card);
+        for (const auto& card: right) deck.emplace_back(card);
+        deck.reset_uids(1);
+        return deck;
+    }
+
+    /* Remove cards with matching UIDs */
+    friend Deck<T> operator-(const Deck<T>& left, const Deck<T>& right)
+    {
+        Deck<T> deck;
+        deck.reserve(left.size());
+        for (const auto& card: left) deck.emplace_back(card);
+        for (const auto& card: right)
+        {
+            for (
+                    auto existing = deck.begin();
+                    existing != deck.end();
+                    ++existing
+                )
+            {
+                if (existing->uid == card.uid)
+                {
+                    deck.erase(existing);
+                    break;
+                }
+            }
+        }
+        return deck;
+    }
+
+};
+
+class ItemDeck
+{
+
+    // std::vector for each item type
+
+    // abstract draw so that it chooses from a random type deck
+
+public:
+
+    ItemDeck();
+    ItemDeck(const ItemDeck& ref);
+
+    ~ItemDeck();
+
 
 };
 
@@ -74,10 +116,21 @@ public:
         float weightVariance
     );
 
-    Deck create_creature_deck(
+    Deck<Creature> create_creature_deck(
             int totalNumCards,
             float maxPossibleStatPoints = 30.0
         );
+
+    ItemDeck create_single_item_deck(
+            int itemType,
+            int totalNumCards,
+            float maxPossibleStatPoints
+        );
+
+    // ItemDeck create_item_deck(
+    //         int totalNumCards,
+    //         float maxPossibleStatPoints
+    //     );
 
 };
 

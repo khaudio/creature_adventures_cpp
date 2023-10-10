@@ -16,6 +16,11 @@ class CoreBase : public TieredObjectBase
 
 public:
 
+    /* Default max stat points available for all creature creation */
+    int maxPossibleStatPoints = 30;
+
+public:
+
     CoreBase(int uidNum, int tierNum);
     ~CoreBase();
 

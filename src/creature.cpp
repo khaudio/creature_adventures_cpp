@@ -176,16 +176,14 @@ void Creature::add_modifier(const CreatureModifier& modifier)
 
 void Creature::remove_modifier(const CreatureModifier& modifier)
 {
-    std::vector<CreatureModifier>::iterator removable;
     for (auto it = this->modifiers.begin(); it != this->modifiers.end(); ++it)
     {
         if (it->uid == modifier.uid)
         {
-            removable = it;
-            break;
+            this->modifiers.erase(it);
+            return;
         }
     }
-    this->modifiers.erase(removable);
 }
 
 void Creature::heal(float value)

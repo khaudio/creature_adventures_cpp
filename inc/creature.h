@@ -1,5 +1,5 @@
-#ifndef CREATUREADVENTURESCREATURE_H
-#define CREATUREADVENTURESCREATURE_H
+#ifndef CREATUREADVENTURES_CREATURE_H
+#define CREATUREADVENTURES_CREATURE_H
 
 #include "tieredobjectbase.h"
 
@@ -8,19 +8,20 @@ namespace CreatureAdventures
 
 class Action;
 
-class ModifierBase
+class ModifierBase : public TieredObjectBase
 {
 
 public:
 
-    int uid;
     int numTurns;
     bool timed;
     bool activeDuringCombat;
 
 public:
 
-    ModifierBase();
+    ModifierBase(int uidNum, int tierNum);
+    ModifierBase(const ModifierBase& ref);
+
     ~ModifierBase();
 
 };
@@ -41,12 +42,14 @@ public:
 
 public:
 
-    CreatureModifier();
+    CreatureModifier(int uidNum, int tierNum);
+    CreatureModifier(const CreatureModifier& ref);
+
     ~CreatureModifier();
 
 };
 
-class CreatureBase : public TieredObjectBase
+class Creature : public TieredObjectBase
 {
 
 public:
@@ -54,18 +57,6 @@ public:
     float baseAttack;
     float baseDefense;
     float baseMaxHP;
-
-public:
-
-    CreatureBase();
-    ~CreatureBase();
-
-};
-
-class Creature : public CreatureBase
-{
-
-public:
 
     std::string owner;
     std::string baseName;
@@ -81,38 +72,40 @@ protected:
 
 public:
 
-    std::vector<ModifierBase> modifiers;
-    std::vector<Action> availableActions;
+    std::vector<CreatureModifier> modifiers;
+    std::vector<Action*> availableActions;
 
 public:
 
-    Creature();
+    Creature(int uidNum, int tierNum);
+    Creature(const Creature& ref);
+
     ~Creature();
 
     void set_owner(std::string ownerName);
-    std::string get_owner();
+    std::string get_owner() const;
 
     void _set_permanent_attack(float value);
-    float _get_permanent_attack();
-    float get_attack();
+    float _get_permanent_attack() const;
+    float get_attack() const;
     
     void _set_permanent_defense(float value);
-    float _get_permanent_defense();
-    float get_defense();
+    float _get_permanent_defense() const;
+    float get_defense() const;
     
     void set_max_hp(float value);
-    float get_max_hp();
+    float get_max_hp() const;
     
     void set_hp(float value);
-    float get_hp();
+    float get_hp() const;
     
     void set_name(std::string nameStr);
-    std::string name();
+    std::string name() const;
 
-    void add_modifier(ModifierBase modifier);
-    void remove_modifier(ModifierBase modifier);
+    void add_modifier(const CreatureModifier& modifier);
+    void remove_modifier(const CreatureModifier& modifier);
 
-    void heal(float additionalHP);
+    void heal(float value);
 
 };
 

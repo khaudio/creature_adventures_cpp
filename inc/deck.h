@@ -1,5 +1,5 @@
-#ifndef CREATUREADVENTURESDECK_H
-#define CREATUREADVENTURESDECK_H
+#ifndef CREATUREADVENTURES_DECK_H
+#define CREATUREADVENTURES_DECK_H
 
 #include "creature.h"
 #include "item.h"
@@ -13,12 +13,23 @@ namespace CreatureAdventures
 class Deck : public std::vector<TieredObjectBase>
 {
 
+protected:
+
+    std::random_device _randDevice;
+
 public:
 
     Deck();
     ~Deck();
 
+    Deck(const Deck& ref);
+
+protected:
+
     void _sequence_uids(std::vector<TieredObjectBase>* iterable, int index = 1);
+
+public:
+
     void reset_uids(int index = 1);
     void shuffle();
     TieredObjectBase draw();
@@ -26,14 +37,12 @@ public:
     // inline Deck operator+(const Deck& other) const
     // {
     //     *this += other;
-    //     _sequence_uids(this);
     //     return this;
     // }
     
     // inline Deck operator-(const Deck& other) const
     // {
     //     *this -= other;
-    //     _sequence_uids(this);
     //     return this;
     // }
 
@@ -47,9 +56,14 @@ protected:
     std::random_device _randDevice;
     std::mt19937 _randGenerator;
 
+    /* UIDs for cards in a decks begin with 1, rather than 0 */
+    int uidIndex = 1;
+
 public:
 
     DeckBuilder();
+    DeckBuilder(const DeckBuilder& ref);
+
     ~DeckBuilder();
 
     /* Create and return a new creature */

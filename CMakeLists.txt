@@ -17,6 +17,7 @@ add_executable(${PROJECT_NAME}
     src/item.cpp
     src/creature.cpp
     src/action.cpp
+    src/deck.cpp
     src/dice.cpp
     src/core.cpp
     src/main.cpp

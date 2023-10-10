@@ -9,13 +9,15 @@ tier(tierNum)
 {
 }
 
+TieredObjectBase::TieredObjectBase(const TieredObjectBase& ref) :
+uid(ref.uid),
+tier(ref.tier)
+{
+}
+
 TieredObjectBase::~TieredObjectBase()
 {
 }
 
-std::string TieredObjectBase::tier_name(int index) const
-{
-    return this->tierNames[index];
-}
 
 };

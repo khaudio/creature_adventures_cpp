@@ -1,5 +1,5 @@
-#ifndef CREATUREADVENTURESACTION_H
-#define CREATUREADVENTURESACTION_H
+#ifndef CREATUREADVENTURES_ACTION_H
+#define CREATUREADVENTURES_ACTION_H
 
 #include "creature.h"
 
@@ -16,18 +16,17 @@ public:
     std::string name;
     std::string description;
 
-    Creature invoker;
-    Creature target;
+    Creature* invoker;
+    Creature* target;
 
     bool pvp;
 
 public:
 
     ActionBase();
-    ~ActionBase();
+    ActionBase(const ActionBase& ref);
 
-    virtual void run();
-    std::pair<float, float> get();
+    ~ActionBase();
 
 };
 
@@ -40,20 +39,25 @@ class Action : public ActionBase
 
 public:
 
-    /* HP gained or lost for each creature.
-    Can be a positive or negative float */
+    /* Absolute HP offset result for invoker.
+    Can be a positive or negative float value */
     float invokerHPDelta = 0;
+
+    /* Absolute HP offset result for target.
+    Can be a positive or negative float value */
     float targetHPDelta = 0;
 
     /* Did invoker successfully complete an evasive maneuver */
-    bool evasive;
+    bool evasive = false;
 
     /* Did invoker fail to make contact or did target evade */
-    bool evaded;
+    bool evaded = false;
 
 public:
 
     Action();
+    Action(const Action& ref);
+
     ~Action();
 
     /* Modifies target creature's HP.
@@ -75,7 +79,7 @@ public:
     and applies it as a negative hp offset
     to invoker (damage) */
     void damage_invoker(float invokerHPLost);
-    
+
     /* Return hp deltas to be processed */
     std::pair<float, float> get();
 
@@ -133,8 +137,6 @@ public:
     Strike();
     ~Strike();
 
-    void run() override;
-
 };
 
 class Meditate : public Action
@@ -149,8 +151,6 @@ public:
 
     Meditate();
     ~Meditate();
-
-    void run() override;
 
 };
 
@@ -167,8 +167,6 @@ public:
     Brace();
     ~Brace();
 
-    void run() override;
-
 };
 
 class Dodge : public Action
@@ -184,8 +182,6 @@ public:
     Dodge();
     ~Dodge();
 
-    void run() override;
-
 };
 
 class InnerPeace : public Action
@@ -200,8 +196,6 @@ public:
 
     InnerPeace();
     ~InnerPeace();
-
-    void run() override;
 
 };
 

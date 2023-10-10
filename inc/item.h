@@ -1,3 +1,6 @@
+#ifndef CREATUREADVENTURES_ITEM_H
+#define CREATUREADVENTURES_ITEM_H
+
 #include "tieredobjectbase.h"
 #include <sstream>
 
@@ -13,11 +16,11 @@ public:
 
     /* Relative ratios of stat points available to items in each tier */
     constexpr static const std::vector<std::pair<float, float>> tierQualityThresholds = {
-            {0.22, 0.22},
-            {0.34, 0.34},
-            {0.67, 0.67},
-            {0.80, 0.80},
-            {1.00, 1.00}
+            {0.22f, 0.22f},
+            {0.34f, 0.34f},
+            {0.67f, 0.67f},
+            {0.80f, 0.80f},
+            {1.00f, 1.00f}
         };
 
 public:
@@ -124,3 +127,4 @@ public:
 
 };
 
+#endif

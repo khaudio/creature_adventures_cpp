@@ -1,30 +1,14 @@
 #ifndef CREATUREADVENTURES_TIEREDOBJECTBASE_H
 #define CREATUREADVENTURES_TIEREDOBJECTBASE_H
 
+#include "defs.h"
+
+#include <array>
 #include <vector>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <map>
-
-#if _DEBUG
-#include <iostream>
-#endif
-
-#ifndef DEBUG_OUT
-#if _DEBUG
-#define DEBUG_OUT(x) std::cout << x << '\n';
-#else
-#define DEUBG_OUT(x)
-#endif
-#endif
-
-#ifndef DEBUG_ERR
-#if _DEBUG
-#define DEBUG_ERR(x) std::cerr << x << '\n';
-#else
-#define DEUBG_ERR(x)
-#endif
-#endif
 
 namespace CreatureAdventures
 {
@@ -35,7 +19,7 @@ class TieredObjectBase
 public:
 
     /* Names for each tier, indicating quality */
-    inline static const std::vector<std::string> tierNames = {
+    static constexpr const std::array<const char*, 5> tierNames = {
             "Common",
             "Uncommon",
             "Rare",
@@ -45,7 +29,7 @@ public:
 
     /* Relative ratios of how many objects of each tier should be created.
     No Legendary objects by default */
-    inline static const std::vector<float> tierVolumeRatios = {
+    static constexpr const std::array<float, 5> tierVolumeRatios = {
             0.56f,
             0.26f,
             0.12f,
@@ -54,14 +38,14 @@ public:
         };
 
     /* Relative ratios of stat points available to items in each tier */
-    inline static const std::vector<std::pair<float, float>> tierQualityThresholds = {
+    static constexpr const std::array<std::pair<float, float>, 5> tierQualityThresholds = {{
             {0.50f, 0.56f},
             {0.56f, 0.63f},
             {0.63f, 0.70f},
             {0.70f, 0.80f},
             {0.80f, 1.00f}
-        };
-    
+        }};
+
     constexpr static const int numTiers = 5;
 
 public:
@@ -75,12 +59,6 @@ public:
     TieredObjectBase(const TieredObjectBase& ref);
     
     ~TieredObjectBase();
-
-    static std::string tier_name(int index)
-    {
-        return tierNames[index];
-    }
-
 
 };
 

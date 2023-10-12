@@ -13,8 +13,8 @@ class ActionBase
 
 public:
 
-    std::string name;
-    std::string description;
+    static constexpr const char* name = "";
+    static constexpr const char* description = "";
 
     Creature* invoker;
     Creature* target;
@@ -99,8 +99,8 @@ class Pass : public Action
 
 public:
 
-    std::string name = "Pass";
-    std::string description = "Forego action";
+    static constexpr const char* name = "Pass";
+    static constexpr const char* description = "Forego action";
 
 public:
 
@@ -114,8 +114,8 @@ class Catch : public Action
 
 public:
 
-    std::string name = "Catch";
-    std::string description = "Attempt to catch a wild creature";
+    static constexpr const char* name = "Catch";
+    static constexpr const char* description = "Attempt to catch a wild creature";
 
 public:
 
@@ -129,8 +129,8 @@ class Strike : public Action
 
 public:
 
-    std::string name = "Strike";
-    std::string description = "Attack an enemy for damage";
+    static constexpr const char* name = "Strike";
+    static constexpr const char* description = "Attack an enemy for damage";
 
 public:
 
@@ -144,8 +144,8 @@ class Meditate : public Action
 
 public:
 
-    std::string name = "Meditate";
-    std::string description = "Roll to increase attack";
+    static constexpr const char* name = "Meditate";
+    static constexpr const char* description = "Roll to increase attack";
 
 public:
 
@@ -159,8 +159,8 @@ class Brace : public Action
 
 public:
 
-    std::string name = "Brace";
-    std::string description = "Roll to increase defense";
+    static constexpr const char* name = "Brace";
+    static constexpr const char* description = "Roll to increase defense";
 
 public:
 
@@ -174,8 +174,8 @@ class Dodge : public Action
 
 public:
 
-    std::string name = "Dodge";
-    std::string description = "Roll to evade incoming attack";
+    static constexpr const char* name = "Dodge";
+    static constexpr const char* description = "Roll to evade incoming attack";
 
 public:
 
@@ -189,8 +189,8 @@ class InnerPeace : public Action
 
 public:
 
-    std::string name = "InnerPeace";
-    std::string description = "Heal for half max HP";
+    static constexpr const char* name = "InnerPeace";
+    static constexpr const char* description = "Heal for half max HP";
 
 public:
 
@@ -204,8 +204,8 @@ class Switch : public ActionBase
 
 public:
 
-    std::string name = "Switch";
-    std::string description = "Switch to another creature";
+    static constexpr const char* name = "Switch";
+    static constexpr const char* description = "Switch to another creature";
 
 public:
 
@@ -219,8 +219,8 @@ class Forfeit : public ActionBase
 
 public:
 
-    std::string name = "Forfeit";
-    std::string description = "Concede defeat and end the battle";
+    static constexpr const char* name = "Forfeit";
+    static constexpr const char* description = "Concede defeat and end the battle";
 
 public:
 
@@ -234,8 +234,8 @@ class Escape : public ActionBase
 
 public:
 
-    std::string name = "Escape";
-    std::string description = "Run from battle";
+    static constexpr const char* name = "Escape";
+    static constexpr const char* description = "Run from battle";
 
 public:
 

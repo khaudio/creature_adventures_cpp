@@ -8,8 +8,6 @@ ActionBase::ActionBase()
 }
 
 ActionBase::ActionBase(const ActionBase& ref) :
-name(ref.name),
-description(ref.description),
 invoker(ref.invoker),
 target(ref.target),
 pvp(ref.pvp)

@@ -5,16 +5,18 @@
 
 using namespace CreatureAdventures;
 
-
 int main(int argc, char** argv)
 {
 
     DeckBuilder builder;
     Deck<Creature> creatureDeck = builder.create_creature_deck(50, 30.0);
 
+    creatureDeck.shuffle();
+
     std::cout << "\n\nCREATURES:\n\n";
-    for (const auto& card: creatureDeck)
+    while (creatureDeck.size())
     {
+        Creature card = creatureDeck.draw();
         std::cout << std::setw(12);
         std::cout << Creature::tierNames[card.tier] << std::setw(8);
         std::cout << card.baseAttack << std::setw(4);
@@ -22,29 +24,23 @@ int main(int argc, char** argv)
         std::cout << card.baseMaxHP << '\n';
     }
 
-    // Deck<Item> itemDeck = builder.create_single_item_deck(0, 2, 30.0f);
-
-    std::vector<Item*> itemDeck;
-    itemDeck.emplace_back(new Potion(0, 0, 30.0f, false));
-    itemDeck.emplace_back(new Poison(1, 1, 40.0f, true));
+    ItemDeck itemDeck = builder.create_item_deck(100, 30.0f);
+    itemDeck.shuffle();
 
     std::cout << "\n\nITEMS:\n\n";
-    for (auto c: itemDeck)
+    while(itemDeck.size())
     {
-        auto card = c;
-
+        Item card = itemDeck.draw();
         std::cout << std::setw(12);
-        std::cout << typeid(*card).name() << std::setw(20);
-        std::cout << "itemTypeIndex:" << std::setw(4);
-        std::cout << card->itemTypeIndex << std::setw(12);
-        std::cout << Item::tierNames[card->tier] << std::setw(8);
-        std::cout << "uid:" << std::setw(4) << card->uid << std::setw(12);
-        std::cout << card->name << std::setw(80);
-        std::cout << card->description << std::setw(20);
-        std::cout << (card->persistent ? "is" : "is not") << " persistent\n";
+        std::cout << typeid(card).name() << std::setw(20);
+        std::cout << "typeIndex:" << std::setw(4);
+        std::cout << card.typeIndex << std::setw(12);
+        std::cout << Item::tierNames[card.tier] << std::setw(8);
+        std::cout << "uid:" << std::setw(4) << card.uid << std::setw(12);
+        std::cout << card.name << std::setw(80);
+        std::cout << card.description << std::setw(20);
+        std::cout << (card.persistent ? "is" : "is not") << " persistent\n";
     }
-
-    for (const auto card: itemDeck) delete card;
 
     return 0;
 

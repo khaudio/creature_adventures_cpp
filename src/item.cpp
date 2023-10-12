@@ -6,18 +6,12 @@ namespace CreatureAdventures
 Item::Item(
         int uidNum,
         int tierNum,
-        int itemType,
         float maxPossibleValue,
         bool isPersistent
     ) :
 TieredObjectBase(uidNum, tierNum),
 persistent(isPersistent)
 {
-    if (itemType > itemTypes.size())
-    {
-        throw std::out_of_range("Invalid item type index");
-    }
-    this->itemTypeIndex = itemType;
     this->value = std::round(
             this->tierQualityThresholds[this->tier].first
             * static_cast<float>(maxPossibleValue)
@@ -26,7 +20,7 @@ persistent(isPersistent)
 
 Item::Item(const Item& ref) :
 TieredObjectBase(ref),
-itemTypeIndex(ref.itemTypeIndex),
+typeIndex(ref.typeIndex),
 persistent(ref.persistent),
 value(ref.value),
 additionalEffects(ref.additionalEffects)
@@ -48,13 +42,15 @@ std::vector<const char*> Item::get_additional_effects()
 }
 
 Potion::Potion(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent) :
-Item(uidNum, tierNum, 0, maxPossibleValue, isPersistent)
+Item(uidNum, tierNum, maxPossibleValue, isPersistent)
 {
+    this->typeIndex = 0;
 }
 
 Potion::Potion(const Potion& ref) :
 Item(ref)
 {
+    this->typeIndex = ref.typeIndex;
 }
 
 Potion::~Potion()
@@ -62,9 +58,16 @@ Potion::~Potion()
 }
 
 Poison::Poison(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent) :
-Item(uidNum, tierNum, 1, maxPossibleValue, isPersistent)
+Item(uidNum, tierNum, maxPossibleValue, isPersistent)
 {
+    this->typeIndex = 1;
     this->additionalEffects.emplace_back("Ignores defense");
+}
+
+Poison::Poison(const Poison& ref) :
+Item(ref)
+{
+    this->typeIndex = ref.typeIndex;
 }
 
 Poison::~Poison()
@@ -72,9 +75,16 @@ Poison::~Poison()
 }
 
 Elixir::Elixir(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent) :
-Item(uidNum, tierNum, 2, maxPossibleValue, isPersistent)
+Item(uidNum, tierNum, maxPossibleValue, isPersistent)
 {
+    this->typeIndex = 2;
     this->additionalEffects.emplace_back("Lasts until end of battle");
+}
+
+Elixir::Elixir(const Elixir& ref) :
+Item(ref)
+{
+    this->typeIndex = ref.typeIndex;
 }
 
 Elixir::~Elixir()
@@ -82,8 +92,15 @@ Elixir::~Elixir()
 }
 
 Revive::Revive(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent) :
-Item(uidNum, tierNum, 3, maxPossibleValue, isPersistent)
+Item(uidNum, tierNum, maxPossibleValue, isPersistent)
 {
+    this->typeIndex = 3;
+}
+
+Revive::Revive(const Revive& ref) :
+Item(ref)
+{
+    this->typeIndex = ref.typeIndex;
 }
 
 Revive::~Revive()
@@ -91,10 +108,18 @@ Revive::~Revive()
 }
 
 Bait::Bait(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent) :
-Item(uidNum, tierNum, 4, maxPossibleValue, isPersistent)
+Item(uidNum, tierNum, maxPossibleValue, isPersistent)
 {
+    this->typeIndex = 4;
     this->additionalEffects.emplace_back("Lasts until end of battle");
 }
+
+Bait::Bait(const Bait& ref) :
+Item(ref)
+{
+    this->typeIndex = ref.typeIndex;
+}
+
 
 Bait::~Bait()
 {

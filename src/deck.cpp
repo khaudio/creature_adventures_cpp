@@ -3,6 +3,20 @@
 namespace CreatureAdventures
 {
 
+DeckBase::DeckBase() :
+_randGenerator(std::time(nullptr))
+{
+}
+
+DeckBase::DeckBase(const DeckBase& ref) :
+_randGenerator(ref._randGenerator)
+{
+}
+
+DeckBase::~DeckBase()
+{
+}
+
 template <typename T>
 Deck<T>::Deck() :
 std::vector<T>()
@@ -44,16 +58,135 @@ void Deck<T>::shuffle()
 template <typename T>
 T Deck<T>::draw()
 {
+    if (std::vector<T>::empty())
+    {
+        DEBUG_ERR("Deck empty\n");
+        throw std::out_of_range("Deck empty");
+    }
     T drawn(this->back());
     this->pop_back();
     return drawn;
 }
 
-DeckBuilder::DeckBuilder()
+ItemDeck::ItemDeck() :
+DeckBase()
+{
+}
+
+ItemDeck::ItemDeck(const ItemDeck& ref) :
+DeckBase(ref),
+_potionDeck(ref._potionDeck),
+_poisonDeck(ref._poisonDeck),
+_elixirDeck(ref._elixirDeck),
+_reviveDeck(ref._reviveDeck),
+_baitDeck(ref._baitDeck)
+{
+}
+
+ItemDeck::~ItemDeck()
+{
+}
+
+size_t ItemDeck::size() const
+{
+return (
+        this->_potionDeck.size()
+        + this->_poisonDeck.size()
+        + this->_elixirDeck.size()
+        + this->_reviveDeck.size()
+        + this->_baitDeck.size()
+    );
+}
+
+bool ItemDeck::empty() const
+{
+return (
+        this->_potionDeck.empty()
+        && this->_poisonDeck.empty()
+        && this->_elixirDeck.empty()
+        && this->_reviveDeck.empty()
+        && this->_baitDeck.empty()
+    );
+}
+
+void ItemDeck::shuffle()
+{
+    this->_potionDeck.shuffle();
+    this->_poisonDeck.shuffle();
+    this->_elixirDeck.shuffle();
+    this->_reviveDeck.shuffle();
+    this->_baitDeck.shuffle();
+}
+
+Item ItemDeck::draw()
+{
+    if (empty())
+    {
+        DEBUG_ERR("Item deck empty\n");
+        throw std::out_of_range("Item deck empty");
+    }
+    Item* itemPtr = nullptr;
+    int typeIndex;
+
+    std::uniform_real_distribution<float> dist(0, (Item::numTypes - 1));
+
+    while (itemPtr == nullptr)
+    {
+        typeIndex = static_cast<int>(std::round(dist(this->_randGenerator)));
+        switch (typeIndex)
+        {
+            case (0):
+                if (!this->_potionDeck.empty())
+                {
+                    Potion classed = this->_potionDeck.draw();
+                    Item item = static_cast<Item>(classed);
+                    itemPtr = &item;
+                    break;
+                }
+            case (1):
+                if (!this->_poisonDeck.empty())
+                {
+                    Poison classed = this->_poisonDeck.draw();
+                    Item item = static_cast<Item>(classed);
+                    itemPtr = &item;
+                    break;
+                }
+            case (2):
+                if (!this->_elixirDeck.empty())
+                {
+                    Elixir classed = this->_elixirDeck.draw();
+                    Item item = static_cast<Item>(classed);
+                    itemPtr = &item;
+                    break;
+                }
+            case (3):
+                if (!this->_reviveDeck.empty())
+                {
+                    Revive classed = this->_reviveDeck.draw();
+                    Item item = static_cast<Item>(classed);
+                    itemPtr = &item;
+                    break;
+                }
+            case (4):
+                if (!this->_baitDeck.empty())
+                {
+                    Bait classed = this->_baitDeck.draw();
+                    Item item = static_cast<Item>(classed);
+                    itemPtr = &item;
+                    break;
+                }
+        }
+    }
+    return *itemPtr;
+}
+
+DeckBuilder::DeckBuilder() :
+DeckBase()
 {
 }
 
 DeckBuilder::DeckBuilder(const DeckBuilder& ref) :
+DeckBase(ref),
 uidIndex(ref.uidIndex)
 {
 }
@@ -62,7 +195,7 @@ DeckBuilder::~DeckBuilder()
 {
 }
 
-Creature DeckBuilder::create_creature(
+Creature DeckBuilder::_create_creature(
         int uidNum,
         int tierNum,
         float maxPossibleStatPoints,
@@ -107,21 +240,16 @@ Creature DeckBuilder::create_creature(
     return newCreature;
 }
 
-Deck<Creature> DeckBuilder::create_creature_deck(
-        int totalNumCards,
-        float maxPossibleStatPoints
-    )
+template <typename T>
+std::vector<int> DeckBuilder::_num_cards_per_tier(int totalMaxNumCards)
 {
-    Deck<Creature> deck;
-    deck.reserve(totalNumCards);
-
     /* Calculate nubmer of cards per tier */
     std::vector<int> cardsPerTier;
-    cardsPerTier.reserve(Creature::numTiers);
-    for (const float& ratio: Creature::tierVolumeRatios)
+    cardsPerTier.reserve(T::numTiers);
+    for (const float& ratio: T::tierVolumeRatios)
     {
         cardsPerTier.emplace_back(static_cast<int>(std::round(
-                ratio * static_cast<float>(totalNumCards)
+                ratio * static_cast<float>(totalMaxNumCards)
             )));
     }
 
@@ -132,7 +260,22 @@ Deck<Creature> DeckBuilder::create_creature_deck(
     {
         sum += numCards;
     }
-    cardsPerTier[0] += totalNumCards - sum;
+    cardsPerTier[0] += totalMaxNumCards - sum;
+    return cardsPerTier;
+}
+
+Deck<Creature> DeckBuilder::create_creature_deck(
+        int totalMaxNumCards,
+        float maxPossibleStatPoints
+    )
+{
+    Deck<Creature> deck;
+    deck.reserve(totalMaxNumCards);
+
+    /* Calculate nubmer of cards per tier */
+    std::vector<int> cardsPerTier(
+            _num_cards_per_tier<Creature>(totalMaxNumCards)
+        );
 
     /* Add cards to each tier */
     float weightVariance(0.0);
@@ -142,7 +285,7 @@ Deck<Creature> DeckBuilder::create_creature_deck(
         weightVariance += 0.035f;
         for (int j(0); j < cardsPerTier[tier]; ++j)
         {
-            deck.emplace_back(create_creature(
+            deck.emplace_back(_create_creature(
                     this->uidIndex++,
                     tier,
                     maxPossibleStatPoints,
@@ -151,34 +294,123 @@ Deck<Creature> DeckBuilder::create_creature_deck(
         }
     }
 
-    /* Deduplicate UIDs */
-    deck.reset_uids();
-
     return deck;
 };
 
-Deck<Item> DeckBuilder::create_single_item_deck(
-        int itemType,
-        int totalNumCards,
+template <typename T>
+void DeckBuilder::_fill_single_item_deck(
+        Deck<T>* deck,
+        int totalMaxNumCards,
         float maxPossibleStatPoints
     )
 {
-    Deck<Item> deck;
+    /* Calculate nubmer of cards per tier */
+    std::vector<int> cardsPerTier(_num_cards_per_tier<T>(totalMaxNumCards));
 
-    deck.emplace_back(Potion(0, 0, maxPossibleStatPoints, false));
-    deck.emplace_back(Poison(1, 1, maxPossibleStatPoints, false));
-
-    return deck;
+    /* Add cards to each tier */
+    for (int tier(0); tier < T::numTiers; ++tier)
+    {
+        for (int j(0); j < cardsPerTier[tier]; ++j)
+        {
+            deck->emplace_back(T(
+                    this->uidIndex++,
+                    tier,
+                    maxPossibleStatPoints,
+                    false
+                ));
+        }
+    }
 }
 
-// Deck<Item> DeckBuilder::create_item_deck(
-//         int totalNumCards,
-//         float maxPossibleStatPoints
-//     )
-// {
-//     Deck<Item> itemDeck = create_single_item_deck(0, 2, 30.0f);
+ItemDeck DeckBuilder::create_item_deck(
+        int totalMaxNumCards,
+        float maxPossibleStatPoints
+    )
+{
+    ItemDeck itemDeck;
+    
+    /* Use a portion for Potions and Elixirs */
+    int chunk(static_cast<int>(std::round(
+            static_cast<float>(totalMaxNumCards) * 0.6f
+        )));
+    chunk += (chunk % 2 ? 1 : 0);
+    int designatedSlice(chunk / 2);
 
-//     return itemDeck;
-// }
+    /* Use remaining cards to create other items */
+    int remainingSlice(static_cast<int>(std::round(
+            static_cast<float>(totalMaxNumCards - chunk)
+        ) / 3));
+
+    _fill_single_item_deck<Potion>(
+            &itemDeck._potionDeck,
+            designatedSlice,
+            std::round(maxPossibleStatPoints / 3)
+        );
+    _fill_single_item_deck<Poison>(
+            &itemDeck._poisonDeck,
+            remainingSlice,
+            -std::round(maxPossibleStatPoints / 3)
+        );
+    _fill_single_item_deck<Elixir>(
+            &itemDeck._elixirDeck,
+            designatedSlice,
+            std::round(maxPossibleStatPoints / 5)
+        );
+    _fill_single_item_deck<Revive>(
+            &itemDeck._reviveDeck,
+            remainingSlice,
+            std::round(maxPossibleStatPoints)
+        );
+    _fill_single_item_deck<Bait>(
+            &itemDeck._baitDeck,
+            remainingSlice,
+            std::round(maxPossibleStatPoints / 5)
+        );
+
+    /* Correct rounding errors by adding
+    or removing Potions and Elixirs */
+    int correction(totalMaxNumCards - static_cast<int>(itemDeck.size()));
+    int index(0);
+    while(correction > 0)
+    {
+        switch (index)
+        {
+            case (0):
+                itemDeck._potionDeck.emplace_back(Potion(
+                        this->uidIndex++,
+                        0,
+                        maxPossibleStatPoints,
+                        false
+                    ));
+                break;
+            case (1):
+                itemDeck._elixirDeck.emplace_back(Elixir(
+                        this->uidIndex++,
+                        0,
+                        maxPossibleStatPoints,
+                        false
+                    ));
+                break;
+        }
+        ++index %= 2;
+        --correction;
+    }
+    while (correction < 0)
+    {
+        switch (index)
+        {
+            case (0):
+                itemDeck._potionDeck.erase(itemDeck._potionDeck.begin());
+            case (1):
+                itemDeck._elixirDeck.erase(itemDeck._elixirDeck.begin());
+        }
+        ++index %= 2;
+        ++correction;
+    }
+
+    return itemDeck;
+}
 
 };
+
+template class CreatureAdventures::Deck<CreatureAdventures::Creature>;

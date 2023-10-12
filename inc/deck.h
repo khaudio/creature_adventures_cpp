@@ -10,13 +10,26 @@
 namespace CreatureAdventures
 {
 
-template <typename T>
-class Deck : public std::vector<T>
+class DeckBase
 {
 
 protected:
 
     std::random_device _randDevice;
+    std::mt19937_64 _randGenerator;
+
+public:
+
+    DeckBase();
+    DeckBase(const DeckBase& ref);
+
+    ~DeckBase();
+
+};
+
+template <typename T>
+class Deck : public std::vector<T>, public DeckBase
+{
 
 public:
 
@@ -27,13 +40,13 @@ public:
 
 protected:
 
-    virtual void _sequence_uids(Deck<T>* deck, int length, int index = 1);
+    void _sequence_uids(Deck<T>* deck, int length, int index = 1);
 
 public:
 
-    virtual void reset_uids(int index = 1);
-    virtual void shuffle();
-    virtual T draw();
+    void reset_uids(int index = 1);
+    void shuffle();
+    T draw();
 
     /* Add decks together and reset UIDs */
     friend Deck<T> operator+(const Deck<T>& left, const Deck<T>& right)
@@ -73,12 +86,18 @@ public:
 
 };
 
-class ItemDeck
+class ItemDeck : public DeckBase
 {
 
-    // std::vector for each item type
+friend class DeckBuilder;
 
-    // abstract draw so that it chooses from a random type deck
+protected:
+
+    Deck<Potion> _potionDeck;
+    Deck<Poison> _poisonDeck;
+    Deck<Elixir> _elixirDeck;
+    Deck<Revive> _reviveDeck;
+    Deck<Bait> _baitDeck;
 
 public:
 
@@ -87,16 +106,17 @@ public:
 
     ~ItemDeck();
 
+    size_t size() const;
+    bool empty() const;
+    void shuffle();
+    Item draw();
 
 };
 
-class DeckBuilder
+class DeckBuilder : public DeckBase
 {
 
 protected:
-
-    std::random_device _randDevice;
-    std::mt19937 _randGenerator;
 
     /* UIDs for cards in a decks begin with 1, rather than 0 */
     int uidIndex = 1;
@@ -108,32 +128,45 @@ public:
 
     ~DeckBuilder();
 
+protected:
+
+    template <typename T>
+    std::vector<int> _num_cards_per_tier(int totalMaxNumCards);
+
     /* Create and return a new creature */
-    Creature create_creature(
+    Creature _create_creature(
         int uidNum,
         int tierNum,
         float maxPossibleStatPoints,
         float weightVariance
     );
 
+public:
+
     Deck<Creature> create_creature_deck(
-            int totalNumCards,
+            int totalMaxNumCards,
             float maxPossibleStatPoints = 30.0
         );
 
-    ItemDeck create_single_item_deck(
-            int itemType,
-            int totalNumCards,
+protected:
+
+    template <typename T>
+    void _fill_single_item_deck(
+            Deck<T>* deck,
+            int totalMaxNumCards,
             float maxPossibleStatPoints
         );
 
-    // ItemDeck create_item_deck(
-    //         int totalNumCards,
-    //         float maxPossibleStatPoints
-    //     );
+public:
+
+    ItemDeck create_item_deck(
+            int totalMaxNumCards,
+            float maxPossibleStatPoints
+        );
 
 };
 
 };
 
 #endif
+

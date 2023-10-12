@@ -32,6 +32,9 @@ public:
             "Bait"
         };
 
+    /* Number of available item types */
+    static constexpr const int numTypes = 5;
+
     /* Item name */
     static constexpr const char* name = "";
 
@@ -41,7 +44,7 @@ public:
 public:
 
     /* Item type index; i.e., Potion, Poision, Elixir, etc. */
-    int itemTypeIndex;
+    int typeIndex;
 
     /* Whether itme is persistent after use */
     bool persistent;
@@ -56,7 +59,6 @@ public:
     Item(
             int uidNum,
             int tierNum,
-            int itemType,
             float maxPossibleValue,
             bool isPersistent = false
         );
@@ -97,6 +99,8 @@ public:
 public:
 
     Poison(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent = false);
+    Poison(const Poison& ref);
+
     ~Poison();
 
 };
@@ -112,6 +116,8 @@ public:
 public:
 
     Elixir(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent = false);
+    Elixir(const Elixir& ref);
+
     ~Elixir();
 
 };
@@ -127,6 +133,8 @@ public:
 public:
 
     Revive(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent = false);
+    Revive(const Revive& ref);
+
     ~Revive();
 
 };
@@ -142,6 +150,8 @@ public:
 public:
 
     Bait(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent = false);
+    Bait(const Bait& ref);
+
     ~Bait();
 
 };

@@ -17,7 +17,9 @@ class CoreBase : public TieredObjectBase
 public:
 
     /* Default max stat points available for all creature creation */
-    int maxPossibleStatPoints = 30;
+    float maxPossibleStatPoints = 30.0;
+
+    float maxPossibleCatchChance;
 
 public:
 

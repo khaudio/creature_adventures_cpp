@@ -13,34 +13,34 @@ int main(int argc, char** argv)
 
     creatureDeck.shuffle();
 
-    std::cout << "\n\nCREATURES:\n\n";
+    DEBUG_OUT("\n\nCREATURES:\n\n");
     while (creatureDeck.size())
     {
         Creature card = creatureDeck.draw();
-        std::cout << std::setw(12);
-        std::cout << Creature::tierNames[card.tier] << std::setw(8);
-        std::cout << card.baseAttack << std::setw(4);
-        std::cout << card.baseDefense << std::setw(4);
-        std::cout << card.baseMaxHP << '\n';
+        DEBUG_OUT(std::setw(12));
+        DEBUG_OUT(Creature::tierNames[card.tier] << std::setw(8));
+        DEBUG_OUT(card.baseAttack << std::setw(4));
+        DEBUG_OUT(card.baseDefense << std::setw(4));
+        DEBUG_OUT(card.baseMaxHP << '\n');
     }
 
     ItemDeck itemDeck = builder.create_item_deck(100, 30.0f);
     itemDeck.shuffle();
 
-    std::cout << "\n\nITEMS:\n\n";
+    DEBUG_OUT("\n\nITEMS:\n\n");
     while(itemDeck.size())
     {
         Item card = itemDeck.draw();
 
-        std::cout << std::setw(12);
-        std::cout << typeid(card).name() << std::setw(20);
-        std::cout << "typeIndex:" << std::setw(4);
-        std::cout << card.typeIndex << std::setw(12);
-        std::cout << Item::tierNames[card.tier] << std::setw(8);
-        std::cout << "uid:" << std::setw(4) << card.uid << std::setw(12);
-        std::cout << card.name << std::setw(80);
-        std::cout << card.description << std::setw(20);
-        std::cout << (card.persistent ? "is" : "is not") << " persistent\n";
+        DEBUG_OUT(std::setw(12));
+        DEBUG_OUT(typeid(card).name() << std::setw(20));
+        DEBUG_OUT("typeIndex:" << std::setw(4));
+        DEBUG_OUT(card.typeIndex << std::setw(12));
+        DEBUG_OUT(Item::tierNames[card.tier] << std::setw(8));
+        DEBUG_OUT("uid:" << std::setw(4) << card.uid << std::setw(12));
+        DEBUG_OUT(card.name << std::setw(80));
+        DEBUG_OUT(card.description << std::setw(20));
+        DEBUG_OUT((card.persistent ? "is" : "is not") << " persistent\n");
     }
 
     return 0;

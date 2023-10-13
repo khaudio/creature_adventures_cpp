@@ -7,6 +7,12 @@ ActionBase::ActionBase()
 {
 }
 
+ActionBase::ActionBase(Creature* actionInvoker, Creature* actionTarget) :
+invoker(actionInvoker),
+target(actionTarget)
+{
+}
+
 ActionBase::ActionBase(const ActionBase& ref) :
 invoker(ref.invoker),
 target(ref.target),
@@ -18,8 +24,12 @@ ActionBase::~ActionBase()
 {
 }
 
-
 Action::Action()
+{
+}
+
+Action::Action(Creature* actionInvoker, Creature* actionTarget) :
+ActionBase(actionInvoker, actionTarget)
 {
 }
 
@@ -62,6 +72,162 @@ std::pair<float, float> Action::get()
             this->invokerHPDelta,
             this->targetHPDelta
         );
+}
+
+TieredAction::TieredAction(int uidNum, int tierNum) :
+TieredObjectBase(uidNum, tierNum)
+{
+}
+
+TieredAction::TieredAction(
+    int uidNum,
+    int tierNum,
+    Creature* actionInvoker,
+    Creature* actionTarget
+    ) :
+Action(actionInvoker, actionTarget),
+TieredObjectBase(uidNum, tierNum)
+{
+}
+
+Strike::Strike() :
+Action()
+{
+}
+
+Strike::Strike(Creature* actionInvoker, Creature* actionTarget) :
+Action(actionInvoker, actionTarget)
+{
+}
+
+Strike::~Strike()
+{
+}
+
+Meditate::Meditate() :
+Action()
+{
+}
+
+Meditate::Meditate(Creature* actionInvoker, Creature* actionTarget) :
+Action(actionInvoker, actionTarget)
+{
+}
+
+Meditate::~Meditate()
+{
+}
+
+Brace::Brace() :
+Action()
+{
+}
+
+Brace::Brace(Creature* actionInvoker, Creature* actionTarget) :
+Action(actionInvoker, actionTarget)
+{
+}
+
+Brace::~Brace()
+{
+}
+
+Dodge::Dodge() :
+Action()
+{
+}
+
+Dodge::Dodge(Creature* actionInvoker, Creature* actionTarget) :
+Action(actionInvoker, actionTarget)
+{
+}
+
+Dodge::~Dodge()
+{
+}
+
+InnerPeace::InnerPeace() :
+Action()
+{
+}
+
+InnerPeace::InnerPeace(Creature* actionInvoker, Creature* actionTarget) :
+Action(actionInvoker, actionTarget)
+{
+}
+
+InnerPeace::~InnerPeace()
+{
+}
+
+Switch::Switch() :
+Action()
+{
+}
+
+Switch::Switch(Creature* actionInvoker, Creature* actionTarget) :
+Action(actionInvoker, actionTarget)
+{
+}
+
+Switch::~Switch()
+{
+}
+
+Forfeit::Forfeit() :
+Action()
+{
+}
+
+Forfeit::Forfeit(Creature* actionInvoker, Creature* actionTarget) :
+Action(actionInvoker, actionTarget)
+{
+}
+
+Forfeit::~Forfeit()
+{
+}
+
+Escape::Escape() :
+Action()
+{
+}
+
+Escape::Escape(Creature* actionInvoker, Creature* actionTarget) :
+Action(actionInvoker, actionTarget)
+{
+}
+
+Escape::~Escape()
+{
+}
+
+Catch::Catch() :
+Action()
+{
+}
+
+Catch::Catch(Creature* actionInvoker, Creature* actionTarget) :
+Action(actionInvoker, actionTarget)
+{
+}
+
+Catch::~Catch()
+{
+}
+
+Pass::Pass() :
+Action()
+{
+}
+
+Pass::Pass(Creature* actionInvoker, Creature* actionTarget) :
+Action(actionInvoker, actionTarget)
+{
+}
+
+Pass::~Pass()
+{
 }
 
 };

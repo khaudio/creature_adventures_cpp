@@ -31,6 +31,7 @@ int main(int argc, char** argv)
     while(itemDeck.size())
     {
         Item card = itemDeck.draw();
+
         std::cout << std::setw(12);
         std::cout << typeid(card).name() << std::setw(20);
         std::cout << "typeIndex:" << std::setw(4);

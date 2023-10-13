@@ -6,6 +6,13 @@
 namespace CreatureAdventures
 {
 
+class Artifact;
+class Sigil;
+class SigilOfPower;
+class SigilOfSpeed;
+class SigilOfWisdom;
+class QuietShoes;
+
 class Artifact
 {
 

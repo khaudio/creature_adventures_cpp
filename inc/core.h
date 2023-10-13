@@ -11,15 +11,20 @@
 namespace CreatureAdventures
 {
 
+class CoreBase;
+
 class CoreBase : public TieredObjectBase
 {
 
 public:
 
-    /* Default max stat points available for all creature creation */
-    float maxPossibleStatPoints = 30.0;
+    /* Max stat points available for all creature creation */
+    static constexpr const float maxPossibleStatPoints = 30.0f;
 
-    float maxPossibleCatchChance;
+    /* Max possible value for catching wild creatures */
+    static constexpr const float maxPossibleCatchChance = 1.0f;
+
+    
 
 public:
 

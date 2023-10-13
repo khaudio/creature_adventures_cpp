@@ -6,6 +6,10 @@
 namespace CreatureAdventures
 {
 
+class ModifierBase;
+class CreatureModifier;
+class Creature;
+
 class Action;
 
 class ModifierBase : public TieredObjectBase

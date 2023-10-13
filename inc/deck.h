@@ -10,6 +10,11 @@
 namespace CreatureAdventures
 {
 
+class DeckBase;
+template <typename T> class Deck;
+class ItemDeck;
+class DeckBuilder;
+
 class DeckBase
 {
 
@@ -52,7 +57,7 @@ public:
     friend Deck<T> operator+(const Deck<T>& left, const Deck<T>& right)
     {
         Deck<T> deck;
-        int length(left.size() + right.size());
+        size_t length(left.size() + right.size());
         deck.reserve(length);
         for (const auto& card: left) deck.emplace_back(card);
         for (const auto& card: right) deck.emplace_back(card);
@@ -108,7 +113,13 @@ public:
 
     size_t size() const;
     bool empty() const;
+
+    /* Shuffle the deck */
     void shuffle();
+
+    /* Draw an item from the deck and return it.
+    Re-cast item to proper type by typeIndex
+    of the drawn card. */
     Item draw();
 
 };

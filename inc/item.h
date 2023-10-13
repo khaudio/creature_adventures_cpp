@@ -9,6 +9,13 @@
 namespace CreatureAdventures
 {
 
+class Item;
+class Potion;
+class Poison;
+class Elixir;
+class Revive;
+class Bait;
+
 class Item : public TieredObjectBase
 {
 
@@ -40,6 +47,8 @@ public:
 
     /* Item description */
     static constexpr const char* description = "";
+
+    static constexpr const int staticTypeIndex = -1;
 
 public:
 
@@ -79,6 +88,8 @@ public:
     static constexpr const char* name = "Potion";
     static constexpr const char* description = "Heals a creature for a specified amount";
 
+    static constexpr const int staticTypeIndex = 0;
+
 public:
 
     Potion(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent = false);
@@ -95,6 +106,8 @@ public:
 
     static constexpr const char* name = "Poison";
     static constexpr const char* description = "Poisons an enemy creature for unmitigated damage";
+
+    static constexpr const int staticTypeIndex = 1;
 
 public:
 
@@ -113,6 +126,8 @@ public:
     static constexpr const char* name = "Elixir";
     static constexpr const char* description = "Raises attack or defense power of a creature";
 
+    static constexpr const int staticTypeIndex = 2;
+
 public:
 
     Elixir(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent = false);
@@ -130,6 +145,8 @@ public:
     static constexpr const char* name = "Revive";
     static constexpr const char* description = "Revives a creature with depleted HP";
 
+    static constexpr const int staticTypeIndex = 3;
+
 public:
 
     Revive(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent = false);
@@ -146,6 +163,8 @@ public:
 
     static constexpr const char* name = "Bait";
     static constexpr const char* description = "Raises chances of successfully catching wild creatures";
+
+    static constexpr const int staticTypeIndex = 4;
 
 public:
 

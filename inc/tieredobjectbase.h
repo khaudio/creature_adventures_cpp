@@ -13,6 +13,8 @@
 namespace CreatureAdventures
 {
 
+class TieredObjectBase;
+
 class TieredObjectBase
 {
 

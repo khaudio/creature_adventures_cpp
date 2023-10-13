@@ -135,7 +135,7 @@ Item ItemDeck::draw()
         typeIndex = static_cast<int>(std::round(dist(this->_randGenerator)));
         switch (typeIndex)
         {
-            case (0):
+            case (Potion::staticTypeIndex):
                 if (!this->_potionDeck.empty())
                 {
                     Potion classed = this->_potionDeck.draw();
@@ -143,7 +143,7 @@ Item ItemDeck::draw()
                     itemPtr = &item;
                     break;
                 }
-            case (1):
+            case (Poison::staticTypeIndex):
                 if (!this->_poisonDeck.empty())
                 {
                     Poison classed = this->_poisonDeck.draw();
@@ -151,7 +151,7 @@ Item ItemDeck::draw()
                     itemPtr = &item;
                     break;
                 }
-            case (2):
+            case (Elixir::staticTypeIndex):
                 if (!this->_elixirDeck.empty())
                 {
                     Elixir classed = this->_elixirDeck.draw();
@@ -159,7 +159,7 @@ Item ItemDeck::draw()
                     itemPtr = &item;
                     break;
                 }
-            case (3):
+            case (Revive::staticTypeIndex):
                 if (!this->_reviveDeck.empty())
                 {
                     Revive classed = this->_reviveDeck.draw();
@@ -167,7 +167,7 @@ Item ItemDeck::draw()
                     itemPtr = &item;
                     break;
                 }
-            case (4):
+            case (Bait::staticTypeIndex):
                 if (!this->_baitDeck.empty())
                 {
                     Bait classed = this->_baitDeck.draw();
@@ -411,6 +411,7 @@ ItemDeck DeckBuilder::create_item_deck(
     return itemDeck;
 }
 
+template class Deck<Creature>;
+
 };
 
-template class CreatureAdventures::Deck<CreatureAdventures::Creature>;

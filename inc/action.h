@@ -6,6 +6,20 @@
 namespace CreatureAdventures
 {
 
+class ActionBase;
+class Action;
+class TieredAction;
+class Strike;
+class Meditate;
+class Brace;
+class Dodge;
+class InnerPeace;
+class Switch;
+class Forfeit;
+class Escape;
+class Catch;
+class Pass;
+
 /* Base class for Actions */
 
 class ActionBase
@@ -24,6 +38,7 @@ public:
 public:
 
     ActionBase();
+    ActionBase(Creature* actionInvoker, Creature* actionTarget);
     ActionBase(const ActionBase& ref);
 
     ~ActionBase();
@@ -56,6 +71,7 @@ public:
 public:
 
     Action();
+    Action(Creature* actionInvoker, Creature* actionTarget);
     Action(const Action& ref);
 
     ~Action();
@@ -90,37 +106,15 @@ class TieredAction : public Action, public TieredObjectBase
 
 public:
 
-    TieredAction(Creature invoker, Creature target);
-
-};
-
-class Pass : public Action
-{
-
-public:
-
-    static constexpr const char* name = "Pass";
-    static constexpr const char* description = "Forego action";
-
-public:
-
-    Pass();
-    ~Pass();
-
-};
-
-class Catch : public Action
-{
-
-public:
-
-    static constexpr const char* name = "Catch";
-    static constexpr const char* description = "Attempt to catch a wild creature";
-
-public:
-
-    Catch();
-    ~Catch();
+    TieredAction(int uidNum, int tierNum);
+    TieredAction(
+            int uidNum,
+            int tierNum,
+            Creature* actionInvoker,
+            Creature* actionTarget
+        );
+    
+    ~TieredAction();
 
 };
 
@@ -135,6 +129,8 @@ public:
 public:
 
     Strike();
+    Strike(Creature* actionInvoker, Creature* actionTarget);
+
     ~Strike();
 
 };
@@ -150,6 +146,8 @@ public:
 public:
 
     Meditate();
+    Meditate(Creature* actionInvoker, Creature* actionTarget);
+
     ~Meditate();
 
 };
@@ -165,6 +163,8 @@ public:
 public:
 
     Brace();
+    Brace(Creature* actionInvoker, Creature* actionTarget);
+
     ~Brace();
 
 };
@@ -180,6 +180,8 @@ public:
 public:
 
     Dodge();
+    Dodge(Creature* actionInvoker, Creature* actionTarget);
+
     ~Dodge();
 
 };
@@ -195,11 +197,13 @@ public:
 public:
 
     InnerPeace();
+    InnerPeace(Creature* actionInvoker, Creature* actionTarget);
+
     ~InnerPeace();
 
 };
 
-class Switch : public ActionBase
+class Switch : public Action
 {
 
 public:
@@ -210,11 +214,13 @@ public:
 public:
 
     Switch();
+    Switch(Creature* actionInvoker, Creature* actionTarget);
+
     ~Switch();
 
 };
 
-class Forfeit : public ActionBase
+class Forfeit : public Action
 {
 
 public:
@@ -225,11 +231,13 @@ public:
 public:
 
     Forfeit();
+    Forfeit(Creature* actionInvoker, Creature* actionTarget);
+
     ~Forfeit();
 
 };
 
-class Escape : public ActionBase
+class Escape : public Action
 {
 
 public:
@@ -240,7 +248,42 @@ public:
 public:
 
     Escape();
+    Escape(Creature* actionInvoker, Creature* actionTarget);
+
     ~Escape();
+
+};
+
+class Catch : public Action
+{
+
+public:
+
+    static constexpr const char* name = "Catch";
+    static constexpr const char* description = "Attempt to catch a wild creature";
+
+public:
+
+    Catch();
+    Catch(Creature* actionInvoker, Creature* actionTarget);
+
+    ~Catch();
+
+};
+
+class Pass : public Action
+{
+
+public:
+
+    static constexpr const char* name = "Pass";
+    static constexpr const char* description = "Forego action";
+
+public:
+
+    Pass();
+    Pass(Creature* actionInvoker, Creature* actionTarget);
+    ~Pass();
 
 };
 

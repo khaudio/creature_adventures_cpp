@@ -9,6 +9,8 @@ namespace CreatureAdventures
 
 /* Emulates traditional dice roll */
 
+class Dice;
+
 class Dice
 {
 

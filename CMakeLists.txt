@@ -19,6 +19,7 @@ add_executable(${PROJECT_NAME}
     src/action.cpp
     src/deck.cpp
     src/dice.cpp
+    src/sigil.cpp
     src/core.cpp
     src/main.cpp
 )

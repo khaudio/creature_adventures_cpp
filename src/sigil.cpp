@@ -2,7 +2,7 @@
 
 namespace CreatureAdventures
 {
-,
+
 Artifact::Artifact()
 {
 }
@@ -23,7 +23,7 @@ Sigil::Sigil(const Sigil& ref)
 {
 }
 
-Sigil::Sigil()
+Sigil::~Sigil()
 {
 }
 

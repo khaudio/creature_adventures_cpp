@@ -40,8 +40,6 @@ public:
 protected:
 
     void _update_action_queue_creature(
-            Creature* oldCreature,
-            Creature* newCreature,
             std::deque<Action>* queue
         );
 

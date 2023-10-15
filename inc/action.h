@@ -1,45 +1,84 @@
 #ifndef CREATUREADVENTURES_ACTION_H
 #define CREATUREADVENTURES_ACTION_H
 
+#include "tieredobjectbase.h"
 #include <memory>
-
-#include "creature.h"
 
 namespace CreatureAdventures
 {
 
-class ActionBase;
 class Action;
-class TieredAction;
-class Strike;
-class Meditate;
-class Brace;
-class Dodge;
-class InnerPeace;
-class Switch;
-class Forfeit;
-class Escape;
-class Catch;
-class Pass;
 
 /* Actions are taken by creatures to cause
 damage or healing during battles.
 Some actions may be used outside of battle */
+
+enum ActionIndex
+{
+    STRIKE = 0,
+    MEDITATE = 1,
+    BRACE = 2,
+    DODGE = 3,
+    INNERPEACE = 4,
+    SWITCH = 5,
+    FORFEIT = 6,
+    ESCAPE = 7,
+    CATCH = 8,
+    PASS = 9,
+};
 
 class Action
 {
 
 public:
 
-    static constexpr const char* name = "";
-    static constexpr const char* description = "";
+    static constexpr const int numTypes = 10;
 
-    Creature* invoker;
-    Creature* target;
+    static constexpr const std::array<int, Action::numTypes> types = {
+        STRIKE,
+        MEDITATE,
+        BRACE,
+        DODGE,
+        INNERPEACE,
+        SWITCH,
+        FORFEIT,
+        ESCAPE,
+        CATCH,
+        PASS,
+    };
+
+    static constexpr const std::array<const char*, Action::numTypes> names = {
+        "Strike",
+        "Meditate",
+        "Brace",
+        "Dodge",
+        "InnerPeace",
+        "Switch",
+        "Forfeit",
+        "Escape",
+        "Catch",
+        "Pass",
+    };
+
+    static constexpr const std::array<const char*, Action::numTypes> descriptions = {
+        "Attack an enemy for damage",
+        "Chance to increase attack",
+        "Chance to increase defense",
+        "Chance to evade incoming attack",
+        "Heal for half max HP",
+        "Switch to another creature",
+        "Concede defeat and end the battle",
+        "Run from battle",
+        "Attempt to catch a wild creature",
+        "Forego action",
+    };
+
+public:
 
     bool pvp;
 
-public:
+    /* enum for which action is to be performed */
+    int typeIndex;
 
     /* Absolute HP offset result for invoker.
     Can be a positive or negative float value */
@@ -57,14 +96,13 @@ public:
 
 public:
 
-    Action();
-    Action(
-            Creature* actionInvoker,
-            Creature* actionTarget
-        );
+    Action(int actionType);
     Action(const Action& ref);
 
     ~Action();
+
+    const char* name() const;
+    const char* description() const;
 
     /* Modifies target creature's HP.
     Positive values add HP (heal),
@@ -88,222 +126,6 @@ public:
 
     /* Return hp deltas to be processed */
     std::pair<float, float> get();
-
-};
-
-class TieredAction : public Action, public TieredObjectBase
-{
-
-public:
-
-    TieredAction(int uidNum, int tierNum);
-    TieredAction(
-            int uidNum,
-            int tierNum,
-            Creature* actionInvoker,
-            Creature* actionTarget
-        );
-    
-    ~TieredAction();
-
-};
-
-class Strike : public Action
-{
-
-public:
-
-    static constexpr const char* name = "Strike";
-    static constexpr const char* description = "Attack an enemy for damage";
-
-public:
-
-    Strike();
-    Strike(
-            Creature* actionInvoker,
-            Creature* actionTarget
-        );
-
-    ~Strike();
-
-};
-
-class Meditate : public Action
-{
-
-public:
-
-    static constexpr const char* name = "Meditate";
-    static constexpr const char* description = "Roll to increase attack";
-
-public:
-
-    Meditate();
-    Meditate(
-            Creature* actionInvoker,
-            Creature* actionTarget
-        );
-
-    ~Meditate();
-
-};
-
-class Brace : public Action
-{
-
-public:
-
-    static constexpr const char* name = "Brace";
-    static constexpr const char* description = "Roll to increase defense";
-
-public:
-
-    Brace();
-    Brace(
-            Creature* actionInvoker,
-            Creature* actionTarget
-        );
-
-    ~Brace();
-
-};
-
-class Dodge : public Action
-{
-
-public:
-
-    static constexpr const char* name = "Dodge";
-    static constexpr const char* description = "Roll to evade incoming attack";
-
-public:
-
-    Dodge();
-    Dodge(
-            Creature* actionInvoker,
-            Creature* actionTarget
-        );
-
-    ~Dodge();
-
-};
-
-class InnerPeace : public Action
-{
-
-public:
-
-    static constexpr const char* name = "InnerPeace";
-    static constexpr const char* description = "Heal for half max HP";
-
-public:
-
-    InnerPeace();
-    InnerPeace(
-            Creature* actionInvoker,
-            Creature* actionTarget
-        );
-
-    ~InnerPeace();
-
-};
-
-class Switch : public Action
-{
-
-public:
-
-    static constexpr const char* name = "Switch";
-    static constexpr const char* description = "Switch to another creature";
-
-public:
-
-    Switch();
-    Switch(
-            Creature* actionInvoker,
-            Creature* actionTarget
-        );
-
-    ~Switch();
-
-};
-
-class Forfeit : public Action
-{
-
-public:
-
-    static constexpr const char* name = "Forfeit";
-    static constexpr const char* description = "Concede defeat and end the battle";
-
-public:
-
-    Forfeit();
-    Forfeit(
-            Creature* actionInvoker,
-            Creature* actionTarget
-        );
-
-    ~Forfeit();
-
-};
-
-class Escape : public Action
-{
-
-public:
-
-    static constexpr const char* name = "Escape";
-    static constexpr const char* description = "Run from battle";
-
-public:
-
-    Escape();
-    Escape(
-            Creature* actionInvoker,
-            Creature* actionTarget
-        );
-
-    ~Escape();
-
-};
-
-class Catch : public Action
-{
-
-public:
-
-    static constexpr const char* name = "Catch";
-    static constexpr const char* description = "Attempt to catch a wild creature";
-
-public:
-
-    Catch();
-    Catch(
-            Creature* actionInvoker,
-            Creature* actionTarget
-        );
-
-    ~Catch();
-
-};
-
-class Pass : public Action
-{
-
-public:
-
-    static constexpr const char* name = "Pass";
-    static constexpr const char* description = "Forego action";
-
-public:
-
-    Pass();
-    Pass(
-            Creature* actionInvoker,
-            Creature* actionTarget
-        );
-    ~Pass();
 
 };
 

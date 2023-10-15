@@ -91,38 +91,36 @@ public:
 
 };
 
-class ItemDeck : public DeckBase
-{
+// class ItemDeck : public DeckBase
+// {
 
-friend class DeckBuilder;
+// friend class DeckBuilder;
 
-protected:
+// protected:
 
-    Deck<Potion> _potionDeck;
-    Deck<Poison> _poisonDeck;
-    Deck<Elixir> _elixirDeck;
-    Deck<Revive> _reviveDeck;
-    Deck<Bait> _baitDeck;
+//     // Deck<Potion> _potionDeck;
+//     // Deck<Poison> _poisonDeck;
+//     // Deck<Elixir> _elixirDeck;
+//     // Deck<Revive> _reviveDeck;
+//     // Deck<Bait> _baitDeck;
 
-public:
+// public:
 
-    ItemDeck();
-    ItemDeck(const ItemDeck& ref);
+//     ItemDeck();
+//     ItemDeck(const ItemDeck& ref);
 
-    ~ItemDeck();
+//     ~ItemDeck();
 
-    size_t size() const;
-    bool empty() const;
+//     size_t size() const;
+//     bool empty() const;
 
-    /* Shuffle the deck */
-    void shuffle();
+//     /* Shuffle the deck */
+//     void shuffle();
 
-    /* Draw an item from the deck and return it.
-    Re-cast item to proper type by typeIndex
-    of the drawn card. */
-    Item draw();
+//     /* Draw an item from the deck and return it */
+//     Item draw();
 
-};
+// };
 
 class DeckBuilder : public DeckBase
 {
@@ -170,7 +168,7 @@ protected:
 
 public:
 
-    ItemDeck create_item_deck(
+    Deck<Item> create_item_deck(
             int totalMaxNumCards,
             float maxPossibleStatPoints
         );

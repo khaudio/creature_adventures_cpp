@@ -84,7 +84,11 @@ Action Battle::_get_next_action(std::deque<Action>* queue)
 void Battle::process_single_action(Action action)
 {
     DEBUG_OUT("Processing action...\n");
-
+    switch (action.typeIndex)
+    {
+        case (SWITCH):
+            ;
+    }
 }
 
 void Battle::process_action_pair_from_queue()

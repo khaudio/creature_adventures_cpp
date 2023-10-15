@@ -5,10 +5,9 @@
 
 #include <array>
 #include <vector>
+#include <stdexcept>
 #include <string>
-#include <string_view>
 #include <utility>
-#include <map>
 
 namespace CreatureAdventures
 {

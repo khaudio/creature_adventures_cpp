@@ -44,7 +44,7 @@ std::vector<const char*> Item::get_additional_effects()
 Potion::Potion(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent) :
 Item(uidNum, tierNum, maxPossibleValue, isPersistent)
 {
-    this->typeIndex = 0;
+    this->typeIndex = Potion::staticTypeIndex;
 }
 
 Potion::Potion(const Potion& ref) :
@@ -60,7 +60,7 @@ Potion::~Potion()
 Poison::Poison(int uidNum, int tierNum, float maxPossibleValue, bool isPersistent) :
 Item(uidNum, tierNum, maxPossibleValue, isPersistent)
 {
-    this->typeIndex = 1;
+    this->typeIndex = Poison::staticTypeIndex;
     this->additionalEffects.emplace_back("Ignores defense");
 }
 

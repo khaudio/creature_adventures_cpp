@@ -3,38 +3,23 @@
 namespace CreatureAdventures
 {
 
-ActionBase::ActionBase()
+Action::Action()
 {
 }
 
-ActionBase::ActionBase(Creature* actionInvoker, Creature* actionTarget) :
+Action::Action(
+        Creature* actionInvoker,
+        Creature* actionTarget
+    ) :
 invoker(actionInvoker),
 target(actionTarget)
 {
 }
 
-ActionBase::ActionBase(const ActionBase& ref) :
+Action::Action(const Action& ref) :
 invoker(ref.invoker),
 target(ref.target),
-pvp(ref.pvp)
-{
-}
-
-ActionBase::~ActionBase()
-{
-}
-
-Action::Action()
-{
-}
-
-Action::Action(Creature* actionInvoker, Creature* actionTarget) :
-ActionBase(actionInvoker, actionTarget)
-{
-}
-
-Action::Action(const Action& ref) :
-ActionBase(ref),
+pvp(ref.pvp),
 invokerHPDelta(ref.invokerHPDelta),
 targetHPDelta(ref.targetHPDelta),
 evasive(ref.evasive),
@@ -95,7 +80,10 @@ Action()
 {
 }
 
-Strike::Strike(Creature* actionInvoker, Creature* actionTarget) :
+Strike::Strike(
+        Creature* actionInvoker,
+        Creature* actionTarget
+    ) :
 Action(actionInvoker, actionTarget)
 {
 }
@@ -109,7 +97,10 @@ Action()
 {
 }
 
-Meditate::Meditate(Creature* actionInvoker, Creature* actionTarget) :
+Meditate::Meditate(
+        Creature* actionInvoker,
+        Creature* actionTarget
+    ) :
 Action(actionInvoker, actionTarget)
 {
 }
@@ -123,7 +114,10 @@ Action()
 {
 }
 
-Brace::Brace(Creature* actionInvoker, Creature* actionTarget) :
+Brace::Brace(
+        Creature* actionInvoker,
+        Creature* actionTarget
+    ) :
 Action(actionInvoker, actionTarget)
 {
 }
@@ -137,7 +131,10 @@ Action()
 {
 }
 
-Dodge::Dodge(Creature* actionInvoker, Creature* actionTarget) :
+Dodge::Dodge(
+        Creature* actionInvoker,
+        Creature* actionTarget
+    ) :
 Action(actionInvoker, actionTarget)
 {
 }
@@ -151,7 +148,10 @@ Action()
 {
 }
 
-InnerPeace::InnerPeace(Creature* actionInvoker, Creature* actionTarget) :
+InnerPeace::InnerPeace(
+        Creature* actionInvoker,
+        Creature* actionTarget
+    ) :
 Action(actionInvoker, actionTarget)
 {
 }
@@ -165,7 +165,10 @@ Action()
 {
 }
 
-Switch::Switch(Creature* actionInvoker, Creature* actionTarget) :
+Switch::Switch(
+        Creature* actionInvoker,
+        Creature* actionTarget
+    ) :
 Action(actionInvoker, actionTarget)
 {
 }
@@ -179,7 +182,10 @@ Action()
 {
 }
 
-Forfeit::Forfeit(Creature* actionInvoker, Creature* actionTarget) :
+Forfeit::Forfeit(
+        Creature* actionInvoker,
+        Creature* actionTarget
+    ) :
 Action(actionInvoker, actionTarget)
 {
 }
@@ -193,7 +199,10 @@ Action()
 {
 }
 
-Escape::Escape(Creature* actionInvoker, Creature* actionTarget) :
+Escape::Escape(
+        Creature* actionInvoker,
+        Creature* actionTarget
+    ) :
 Action(actionInvoker, actionTarget)
 {
 }
@@ -207,7 +216,10 @@ Action()
 {
 }
 
-Catch::Catch(Creature* actionInvoker, Creature* actionTarget) :
+Catch::Catch(
+        Creature* actionInvoker,
+        Creature* actionTarget
+    ) :
 Action(actionInvoker, actionTarget)
 {
 }
@@ -221,7 +233,10 @@ Action()
 {
 }
 
-Pass::Pass(Creature* actionInvoker, Creature* actionTarget) :
+Pass::Pass(
+        Creature* actionInvoker,
+        Creature* actionTarget
+    ) :
 Action(actionInvoker, actionTarget)
 {
 }

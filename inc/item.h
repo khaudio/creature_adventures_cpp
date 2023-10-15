@@ -39,14 +39,14 @@ public:
             "Bait"
         };
 
-    /* Number of available item types */
-    static constexpr const int numTypes = 5;
-
     /* Item name */
     static constexpr const char* name = "";
 
     /* Item description */
     static constexpr const char* description = "";
+
+    /* Number of available item types */
+    static constexpr const int numTypes = 5;
 
     static constexpr const int staticTypeIndex = -1;
 

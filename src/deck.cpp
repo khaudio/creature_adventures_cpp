@@ -58,11 +58,13 @@ void Deck<T>::shuffle()
 template <typename T>
 T Deck<T>::draw()
 {
+    #if _DEBUG
     if (std::vector<T>::empty())
     {
-        DEBUG_ERR("Deck empty\n");
         throw std::out_of_range("Deck empty");
     }
+    #endif
+
     T drawn(this->back());
     this->pop_back();
     return drawn;
@@ -120,11 +122,13 @@ void ItemDeck::shuffle()
 
 Item ItemDeck::draw()
 {
+    #if _DEBUG
     if (empty())
     {
-        DEBUG_ERR("Item deck empty\n");
         throw std::out_of_range("Item deck empty");
     }
+    #endif
+
     Item* itemPtr = nullptr;
     int typeIndex;
 

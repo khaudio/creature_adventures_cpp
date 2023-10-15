@@ -1,6 +1,8 @@
 #ifndef CREATUREADVENTURES_ACTION_H
 #define CREATUREADVENTURES_ACTION_H
 
+#include <memory>
+
 #include "creature.h"
 
 namespace CreatureAdventures
@@ -20,9 +22,11 @@ class Escape;
 class Catch;
 class Pass;
 
-/* Base class for Actions */
+/* Actions are taken by creatures to cause
+damage or healing during battles.
+Some actions may be used outside of battle */
 
-class ActionBase
+class Action
 {
 
 public:
@@ -34,23 +38,6 @@ public:
     Creature* target;
 
     bool pvp;
-
-public:
-
-    ActionBase();
-    ActionBase(Creature* actionInvoker, Creature* actionTarget);
-    ActionBase(const ActionBase& ref);
-
-    ~ActionBase();
-
-};
-
-/* Actions are taken by creatures to cause
-damage or healing during battles.
-Some actions may be used outside of battle */
-
-class Action : public ActionBase
-{
 
 public:
 
@@ -71,7 +58,10 @@ public:
 public:
 
     Action();
-    Action(Creature* actionInvoker, Creature* actionTarget);
+    Action(
+            Creature* actionInvoker,
+            Creature* actionTarget
+        );
     Action(const Action& ref);
 
     ~Action();
@@ -129,7 +119,10 @@ public:
 public:
 
     Strike();
-    Strike(Creature* actionInvoker, Creature* actionTarget);
+    Strike(
+            Creature* actionInvoker,
+            Creature* actionTarget
+        );
 
     ~Strike();
 
@@ -146,7 +139,10 @@ public:
 public:
 
     Meditate();
-    Meditate(Creature* actionInvoker, Creature* actionTarget);
+    Meditate(
+            Creature* actionInvoker,
+            Creature* actionTarget
+        );
 
     ~Meditate();
 
@@ -163,7 +159,10 @@ public:
 public:
 
     Brace();
-    Brace(Creature* actionInvoker, Creature* actionTarget);
+    Brace(
+            Creature* actionInvoker,
+            Creature* actionTarget
+        );
 
     ~Brace();
 
@@ -180,7 +179,10 @@ public:
 public:
 
     Dodge();
-    Dodge(Creature* actionInvoker, Creature* actionTarget);
+    Dodge(
+            Creature* actionInvoker,
+            Creature* actionTarget
+        );
 
     ~Dodge();
 
@@ -197,7 +199,10 @@ public:
 public:
 
     InnerPeace();
-    InnerPeace(Creature* actionInvoker, Creature* actionTarget);
+    InnerPeace(
+            Creature* actionInvoker,
+            Creature* actionTarget
+        );
 
     ~InnerPeace();
 
@@ -214,7 +219,10 @@ public:
 public:
 
     Switch();
-    Switch(Creature* actionInvoker, Creature* actionTarget);
+    Switch(
+            Creature* actionInvoker,
+            Creature* actionTarget
+        );
 
     ~Switch();
 
@@ -231,7 +239,10 @@ public:
 public:
 
     Forfeit();
-    Forfeit(Creature* actionInvoker, Creature* actionTarget);
+    Forfeit(
+            Creature* actionInvoker,
+            Creature* actionTarget
+        );
 
     ~Forfeit();
 
@@ -248,7 +259,10 @@ public:
 public:
 
     Escape();
-    Escape(Creature* actionInvoker, Creature* actionTarget);
+    Escape(
+            Creature* actionInvoker,
+            Creature* actionTarget
+        );
 
     ~Escape();
 
@@ -265,7 +279,10 @@ public:
 public:
 
     Catch();
-    Catch(Creature* actionInvoker, Creature* actionTarget);
+    Catch(
+            Creature* actionInvoker,
+            Creature* actionTarget
+        );
 
     ~Catch();
 
@@ -282,7 +299,10 @@ public:
 public:
 
     Pass();
-    Pass(Creature* actionInvoker, Creature* actionTarget);
+    Pass(
+            Creature* actionInvoker,
+            Creature* actionTarget
+        );
     ~Pass();
 
 };

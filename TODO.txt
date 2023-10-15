@@ -1,8 +1,8 @@
 # TODO
 
-- core class
-- artifact and sigils
 - dice roll range 0.0 - 1.0
+    - spawn shared_ptr dice per battle that is used for action rolls
 - json state save
 - player
 - battle
+- core class

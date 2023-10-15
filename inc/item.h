@@ -61,7 +61,7 @@ public:
 
     /* enum of type of item;
     i.e., Potion, Poision, Elixir, etc. */
-    const int typeIndex;
+    const ItemIndex type;
 
     /* Whether itme is persistent after use */
     bool persistent;
@@ -76,7 +76,7 @@ public:
     Item(
             int uidNum,
             int tierNum,
-            int itemTypeIndex,
+            ItemIndex itemTypeIndex,
             float maxPossibleValue,
             bool isPersistent = false
         );

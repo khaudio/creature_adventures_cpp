@@ -6,19 +6,19 @@ namespace CreatureAdventures
 Item::Item(
         int uidNum,
         int tierNum,
-        int itemTypeIndex,
+        ItemIndex itemTypeIndex,
         float maxPossibleValue,
         bool isPersistent
     ) :
 TieredObjectBase(uidNum, tierNum),
-typeIndex(itemTypeIndex),
+type(itemTypeIndex),
 persistent(isPersistent)
 {
     #if _DEBUG
     auto iter = std::find(
             Item::types.begin(),
             Item::types.end(),
-            this->typeIndex
+            this->type
         );
     if (iter == Item::types.end())
     {
@@ -34,7 +34,7 @@ persistent(isPersistent)
 
 Item::Item(const Item& ref) :
 TieredObjectBase(ref),
-typeIndex(ref.typeIndex),
+type(ref.type),
 persistent(ref.persistent),
 value(ref.value),
 additionalEffects(ref.additionalEffects)
@@ -43,7 +43,7 @@ additionalEffects(ref.additionalEffects)
     auto iter = std::find(
             Item::types.begin(),
             Item::types.end(),
-            this->typeIndex
+            this->type
         );
     if (iter == Item::types.end())
     {
@@ -63,19 +63,19 @@ float Item::get()
 
 const char* Item::name() const
 {
-    return Item::names.at(this->typeIndex);
+    return Item::names.at(this->type);
 }
 
 const char* Item::description() const
 {
-    return Item::descriptions.at(this->typeIndex);
+    return Item::descriptions.at(this->type);
 }
 
 std::vector<const char*> Item::additional_effects() const
 {
     std::vector<const char*> additionalEffects;
     
-    switch (this->typeIndex)
+    switch (this->type)
     {
         case POISON:
             additionalEffects.emplace_back("Ignores defense");

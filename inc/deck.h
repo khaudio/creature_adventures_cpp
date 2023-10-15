@@ -12,7 +12,6 @@ namespace CreatureAdventures
 
 class DeckBase;
 template <typename T> class Deck;
-class ItemDeck;
 class DeckBuilder;
 
 class DeckBase
@@ -145,7 +144,7 @@ protected:
     /* Create and return a new creature */
     Creature _create_creature(
         int uidNum,
-        int tierNum,
+        TierIndex tierNum,
         float maxPossibleStatPoints,
         float weightVariance
     );
@@ -160,8 +159,8 @@ public:
 protected:
 
     template <typename T>
-    void _fill_single_item_deck(
-            Deck<T>* deck,
+    Deck<Item> _create_single_item_deck(
+            ItemIndex itemTypeIndex,
             int totalMaxNumCards,
             float maxPossibleStatPoints
         );

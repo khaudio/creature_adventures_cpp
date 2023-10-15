@@ -3,14 +3,14 @@
 namespace CreatureAdventures
 {
 
-Action::Action(int actionTypeIndex) :
-typeIndex(actionTypeIndex)
+Action::Action(ActionIndex actionTypeIndex) :
+type(actionTypeIndex)
 {
     #if _DEBUG
     auto iter = std::find(
             Action::types.begin(),
             Action::types.end(),
-            this->typeIndex
+            this->type
         );
     if (iter == types.end())
     {
@@ -20,7 +20,7 @@ typeIndex(actionTypeIndex)
 }
 
 Action::Action(const Action& ref) :
-typeIndex(ref.typeIndex),
+type(ref.type),
 pvp(ref.pvp),
 invokerHPDelta(ref.invokerHPDelta),
 targetHPDelta(ref.targetHPDelta),
@@ -31,7 +31,7 @@ evaded(ref.evaded)
     auto iter = std::find(
             Action::types.begin(),
             Action::types.end(),
-            this->typeIndex
+            this->type
         );
     if (iter == types.end())
     {
@@ -46,12 +46,12 @@ Action::~Action()
 
 const char* Action::name() const
 {
-    return Action::names.at(this->typeIndex);
+    return Action::names.at(this->type);
 }
 
 const char* Action::description() const
 {
-    return Action::descriptions.at(this->typeIndex);
+    return Action::descriptions.at(this->type);
 }
 
 void Action::offset_target_hp(float targetHPOffset)

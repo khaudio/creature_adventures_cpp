@@ -34,7 +34,7 @@ public:
 
     static constexpr const int numTypes = 10;
 
-    static constexpr const std::array<int, Action::numTypes> types = {
+    static constexpr const std::array<ActionIndex, Action::numTypes> types = {
         STRIKE,
         MEDITATE,
         BRACE,
@@ -78,7 +78,7 @@ public:
     bool pvp;
 
     /* enum for which action is to be performed */
-    int typeIndex;
+    const ActionIndex type;
 
     /* Absolute HP offset result for invoker.
     Can be a positive or negative float value */
@@ -96,7 +96,7 @@ public:
 
 public:
 
-    Action(int actionType);
+    Action(ActionIndex actionType);
     Action(const Action& ref);
 
     ~Action();

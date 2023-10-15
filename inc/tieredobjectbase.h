@@ -14,13 +14,24 @@ namespace CreatureAdventures
 
 class TieredObjectBase;
 
+enum TierIndex
+{
+    COMMON = 0,
+    UNCOMMON = 1,
+    RARE = 2,
+    EPIC = 3,
+    LEGENDARY = 4,
+};
+
 class TieredObjectBase
 {
 
 public:
 
+    static constexpr const int numTiers = 5;
+
     /* Names for each tier, indicating quality */
-    static constexpr const std::array<const char*, 5> tierNames = {
+    static constexpr const std::array<const char*, TieredObjectBase::numTiers> tierNames = {
             "Common",
             "Uncommon",
             "Rare",
@@ -30,7 +41,7 @@ public:
 
     /* Relative ratios of how many objects of each tier should be created.
     No Legendary objects by default */
-    static constexpr const std::array<float, 5> tierVolumeRatios = {
+    static constexpr const std::array<float, TieredObjectBase::numTiers> tierVolumeRatios = {
             0.56f,
             0.26f,
             0.12f,
@@ -39,7 +50,7 @@ public:
         };
 
     /* Relative ratios of stat points available to items in each tier */
-    static constexpr const std::array<std::pair<float, float>, 5> tierQualityThresholds = {{
+    static constexpr const std::array<std::pair<float, float>, TieredObjectBase::numTiers> tierQualityThresholds = {{
             {0.50f, 0.56f},
             {0.56f, 0.63f},
             {0.63f, 0.70f},
@@ -47,18 +58,16 @@ public:
             {0.80f, 1.00f}
         }};
 
-    constexpr static const int numTiers = 5;
-
 public:
 
     int uid;
-    int tier;
+    TierIndex tier;
 
 public:
 
-    TieredObjectBase(int uidNum, int tierNum);
+    TieredObjectBase(int uidNum, TierIndex tierNum);
     TieredObjectBase(const TieredObjectBase& ref);
-    
+
     ~TieredObjectBase();
 
 };

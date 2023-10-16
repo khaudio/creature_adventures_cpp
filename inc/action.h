@@ -2,12 +2,16 @@
 #define CREATUREADVENTURES_ACTION_H
 
 #include "tieredobjectbase.h"
+#include "dice.h"
+
 #include <memory>
 
 namespace CreatureAdventures
 {
 
 class Action;
+
+class Creature;
 
 /* Actions are taken by creatures to cause
 damage or healing during battles.
@@ -124,8 +128,7 @@ public:
     to invoker (damage) */
     void damage_invoker(float invokerHPLost);
 
-    /* Return hp deltas to be processed */
-    std::pair<float, float> get();
+    void process(Creature* invoker, Creature* target);
 
 };
 

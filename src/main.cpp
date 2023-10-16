@@ -44,6 +44,11 @@ int main(int argc, char** argv)
         DEBUG_OUT((card.persistent ? "is" : "is not") << " persistent\n");
     }
 
+    for (int i(0); i < 10; ++i)
+    {
+        DEBUG_OUT(random_multiplier_roll<float>(0.0, 1.0) << '\n');
+    }
+
     return 0;
 
 }

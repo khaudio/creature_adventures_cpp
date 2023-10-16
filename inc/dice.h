@@ -2,26 +2,14 @@
 #define CREATUREADVENTURES_DICE_H
 
 #include <random>
-#include <ctime>
 
 namespace CreatureAdventures
 {
 
-/* Emulates traditional dice roll */
-
-class Dice;
-
-class Dice
-{
-
-public:
-
-    Dice();
-    ~Dice();
-
-    int roll(int sides = 6);
-
-};
+/* Returns a random value;
+where (min <= result <= max) */
+template <typename T>
+T random_multiplier_roll(T min = 0.0, T max = 1.0);
 
 };
 

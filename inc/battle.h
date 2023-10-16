@@ -13,6 +13,15 @@ class Battle
 
 protected:
 
+    /* False when aggressor forfeits */
+    bool _aggressorActive;
+
+    /* False when defender forfeits */
+    bool _defenderActive;
+
+    /* True when battle is a tie */
+    bool _isDraw;
+
     /* Queue of actions to be executed */
     std::deque<Action> _aggressorActionQueue;
     std::deque<Action> _defenderActionQueue;
@@ -37,11 +46,12 @@ public:
 
     bool active();
 
-protected:
+    /* Check victory conditions and return
+    the victor if battle is over and not a draw,
+    otherwise return nullptr */
+    Creature* result();
 
-    void _update_action_queue_creature(
-            std::deque<Action>* queue
-        );
+protected:
 
     void _switch_creatures(
             Creature* aggresingCreature,
@@ -54,7 +64,7 @@ public:
 
     /* Process a single action; in normal pvp play,
     actions should be processed in pairs */
-    void process_single_action(Action action);
+    void process_single_action(Action action, Creature* invoker, Creature* target);
 
     /* Process actions in pairs so that
     combat happens simultaneously */

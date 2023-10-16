@@ -3,11 +3,17 @@
 namespace CreatureAdventures
 {
 
-Battle::Battle()
+Battle::Battle() :
+_aggressorActive(true),
+_defenderActive(true),
+_isDraw(false)
 {
 }
 
-Battle::Battle(const Battle& ref)
+Battle::Battle(const Battle& ref) :
+_aggressorActive(ref._aggressorActive),
+_defenderActive(ref._defenderActive),
+_isDraw(ref._isDraw)
 {
 }
 
@@ -18,28 +24,45 @@ Battle::~Battle()
 bool Battle::active()
 {
     return (
-            (this->aggressor.hp > 0)
+            this->_aggressorActive
+            && this->_defenderActive
+            && (this->aggressor.hp > 0)
             && (this->defender.hp > 0)
         );
 }
 
-void Battle::_update_action_queue_creature(
-        Creature* oldCreature,
-        Creature* newCreature,
-        std::deque<Action> queue
-    )
+Creature* Battle::result()
 {
-    for (auto action: queue)
+    this->_aggressorActive = (
+            (this->aggressor.hp > 0)
+            ? this->_aggressorActive
+            : false
+        );
+    this->_defenderActive = (
+            (this->defender.hp > 0)
+            ? this->_defenderActive
+            : false
+        );
+
+    if (active())
     {
-        if (action.invoker->uid == oldCreature->uid)
-        {
-            action.invoker = newCreature;
-        }
-        if (action.target->uid == oldCreature->uid)
-        {
-            action.target = newCreature;
-        }
+        return nullptr;
     }
+
+    if (this->_aggressorActive && (!this->_defenderActive))
+    {
+        return this->aggressor;
+    }
+    else if ((!this->_aggressorActive) && this->_defenderActive)
+    {
+        return this->defender;
+    }
+    else if (!(this->_aggressorActive && this->_defenderActive))
+    {
+        this->_isDraw = true;
+    }
+
+    return nullptr;
 }
 
 void _switch_creatures(
@@ -54,22 +77,6 @@ void _switch_creatures(
     }
     #endif
 
-    if (aggressingCreature->uid != this->aggressor->uid)
-    {
-        _update_action_queue_creature(
-                this->aggresor,
-                aggressingCreature,
-                &this->_aggressorActionQueue
-            );
-    }
-    if (defendingCreature->uid != this->defender->uid)
-    {
-        _update_action_queue_creature(
-                this->defender,
-                defendingCreature,
-                &this->_defenderActionQueue
-            );
-    }
     this->aggressor = aggressingCreature;
     this->defender = defendingCreature;
 }
@@ -81,13 +88,47 @@ Action Battle::_get_next_action(std::deque<Action>* queue)
     return action;
 }
 
-void Battle::process_single_action(Action action)
+void Battle::process_single_action(Action action, Creature* invoker, Creature* target)
 {
     DEBUG_OUT("Processing action...\n");
+
     switch (action.typeIndex)
     {
+        case (FORFEIT):
+
+            /* Invoker forfeits */
+            this->_aggressorActive = (
+                    (invoker == this->aggressor)
+                    ? false
+                    : this->_aggressorActive
+                );
+            this->_defenderActive = (
+                    (invoker == this->defender)
+                    ? false
+                    : this->_defenderActive
+                );
+            return;
+
+        case (PASS):
+
+            /* Do nothing */
+            return;
+
         case (SWITCH):
+
+            /* Target is creature to switch to */
+            if (target->hp <= 0)
+            {
+                throw std::invalid_argument("Creature hp must be > 0\n");
+            }
+            _switch_creatures(invoker, target);
+            return;
+
+        case (ESCAPE):
+
+            /* Attempt to end the battle */
             ;
+
     }
 }
 
@@ -102,12 +143,16 @@ void Battle::process_action_pair_from_queue()
     {
         throw std::out_of_range("Defender action queue empty");
     }
+    if (!active())
+    {
+        throw std::logic_error("Battle not in active state\n");
+    }
     #endif
 
     Action aggressorAction(_get_next_action(&this->_aggressorActionQueue));
     Action defenderAction(_get_next_action(&this->_defenderActionQueue));
 
-    
+
 
 }
 

@@ -74,12 +74,9 @@ void Action::damage_invoker(float invokerHPLost)
     this->invokerHPDelta -= invokerHPLost;
 }
 
-std::pair<float, float> Action::get()
+void Action::process(Creature* invoker, Creature* target)
 {
-    return std::pair<float, float>(
-            this->invokerHPDelta,
-            this->targetHPDelta
-        );
+    // float multiplier = random_multiplier_roll<float>();
 }
 
 };

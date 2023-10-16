@@ -3,18 +3,15 @@
 namespace CreatureAdventures
 {
 
-Dice::Dice()
+template <typename T>
+T random_multiplier_roll(T min, T max)
 {
-    std::srand(std::time(nullptr));
+    std::random_device rd;
+    std::uniform_real_distribution<T> dist(min, max);
+    return dist(rd);
 }
 
-Dice::~Dice()
-{
-}
-
-int Dice::roll(int sides)
-{
-    return (1 + (std::rand() % sides));
-}
+template float random_multiplier_roll(float, float);
+template double random_multiplier_roll(double, double);
 
 };

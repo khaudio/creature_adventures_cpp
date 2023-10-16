@@ -28,7 +28,7 @@ public:
 
 public:
 
-    CoreBase(int uidNum, int tierNum);
+    CoreBase(int uidNum, TierIndex tierNum);
     ~CoreBase();
 
 };

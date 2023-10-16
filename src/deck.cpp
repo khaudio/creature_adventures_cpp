@@ -3,6 +3,15 @@
 namespace CreatureAdventures
 {
 
+template <typename T>
+void _sequence_uids(Deck<T>* deck, int length, int index)
+{
+    for (int i(0); i < length; ++i)
+    {
+        deck->at(i).uid = index++;
+    }
+}
+
 DeckBase::DeckBase() :
 _randGenerator(std::time(nullptr))
 {
@@ -35,15 +44,6 @@ std::vector<T>(ref)
 }
 
 template <typename T>
-void Deck<T>::_sequence_uids(Deck<T>* deck, int length, int index)
-{
-    for (int i(0); i < length; ++i)
-    {
-        deck->at(i).uid = index++;
-    }
-}
-
-template <typename T>
 void Deck<T>::reset_uids(int index)
 {
     _sequence_uids(this, index);
@@ -52,7 +52,7 @@ void Deck<T>::reset_uids(int index)
 template <typename T>
 void Deck<T>::shuffle()
 {
-    std::shuffle(this->begin(), this->end(), this->_randDevice);
+    std::shuffle(this->begin(), this->end(), std::random_device());
 }
 
 template <typename T>
@@ -69,120 +69,6 @@ T Deck<T>::draw()
     this->pop_back();
     return drawn;
 }
-
-// ItemDeck::ItemDeck() :
-// DeckBase()
-// {
-// }
-
-// ItemDeck::ItemDeck(const ItemDeck& ref) :
-// DeckBase(ref),
-// _potionDeck(ref._potionDeck),
-// _poisonDeck(ref._poisonDeck),
-// _elixirDeck(ref._elixirDeck),
-// _reviveDeck(ref._reviveDeck),
-// _baitDeck(ref._baitDeck)
-// {
-// }
-
-// ItemDeck::~ItemDeck()
-// {
-// }
-
-// size_t ItemDeck::size() const
-// {
-// return (
-//         this->_potionDeck.size()
-//         + this->_poisonDeck.size()
-//         + this->_elixirDeck.size()
-//         + this->_reviveDeck.size()
-//         + this->_baitDeck.size()
-//     );
-// }
-
-// bool ItemDeck::empty() const
-// {
-// return (
-//         this->_potionDeck.empty()
-//         && this->_poisonDeck.empty()
-//         && this->_elixirDeck.empty()
-//         && this->_reviveDeck.empty()
-//         && this->_baitDeck.empty()
-//     );
-// }
-
-// void ItemDeck::shuffle()
-// {
-//     this->_potionDeck.shuffle();
-//     this->_poisonDeck.shuffle();
-//     this->_elixirDeck.shuffle();
-//     this->_reviveDeck.shuffle();
-//     this->_baitDeck.shuffle();
-// }
-
-// Item ItemDeck::draw()
-// {
-//     #if _DEBUG
-//     if (empty())
-//     {
-//         throw std::out_of_range("Item deck empty");
-//     }
-//     #endif
-
-//     Item* itemPtr = nullptr;
-//     int typeIndex;
-
-//     std::uniform_real_distribution<float> dist(0, (Item::numTypes - 1));
-
-//     while (itemPtr == nullptr)
-//     {
-//         typeIndex = static_cast<int>(std::round(dist(this->_randGenerator)));
-//         switch (typeIndex)
-//         {
-//             case (Potion::staticTypeIndex):
-//                 if (!this->_potionDeck.empty())
-//                 {
-//                     Potion classed = this->_potionDeck.draw();
-//                     Item item = static_cast<Item>(classed);
-//                     itemPtr = &item;
-//                     break;
-//                 }
-//             case (Poison::staticTypeIndex):
-//                 if (!this->_poisonDeck.empty())
-//                 {
-//                     Poison classed = this->_poisonDeck.draw();
-//                     Item item = static_cast<Item>(classed);
-//                     itemPtr = &item;
-//                     break;
-//                 }
-//             case (Elixir::staticTypeIndex):
-//                 if (!this->_elixirDeck.empty())
-//                 {
-//                     Elixir classed = this->_elixirDeck.draw();
-//                     Item item = static_cast<Item>(classed);
-//                     itemPtr = &item;
-//                     break;
-//                 }
-//             case (Revive::staticTypeIndex):
-//                 if (!this->_reviveDeck.empty())
-//                 {
-//                     Revive classed = this->_reviveDeck.draw();
-//                     Item item = static_cast<Item>(classed);
-//                     itemPtr = &item;
-//                     break;
-//                 }
-//             case (Bait::staticTypeIndex):
-//                 if (!this->_baitDeck.empty())
-//                 {
-//                     Bait classed = this->_baitDeck.draw();
-//                     Item item = static_cast<Item>(classed);
-//                     itemPtr = &item;
-//                     break;
-//                 }
-//         }
-//     }
-//     return *itemPtr;
-// }
 
 DeckBuilder::DeckBuilder() :
 DeckBase()
@@ -301,7 +187,6 @@ Deck<Creature> DeckBuilder::create_creature_deck(
     return deck;
 };
 
-template <typename T>
 Deck<Item> DeckBuilder::_create_single_item_deck(
         ItemIndex itemTypeIndex,
         int totalMaxNumCards,
@@ -311,23 +196,23 @@ Deck<Item> DeckBuilder::_create_single_item_deck(
     Deck<Item> deck;
 
     /* Calculate nubmer of cards per tier */
-    std::vector<int> cardsPerTier(_num_cards_per_tier<T>(totalMaxNumCards));
+    std::vector<int> cardsPerTier(_num_cards_per_tier<Item>(totalMaxNumCards));
 
     int sum(0);
-    for (const auto& i: totalMaxNumCards)
+    for (const auto& i: cardsPerTier)
     {
         sum += i;
     }
     deck.reserve(sum);
 
     /* Add cards to each tier */
-    for (TierIndex tier(0); tier < T::numTiers; ++tier)
+    for (int tier(COMMON); tier < Item::numTiers; ++tier)
     {
         for (int i(0); i < cardsPerTier[tier]; ++i)
         {
-            deck.emplace_back(T(
+            deck.emplace_back(Item(
                     this->uidIndex++,
-                    tier,
+                    static_cast<TierIndex>(tier),
                     itemTypeIndex,
                     maxPossibleStatPoints,
                     false
@@ -385,10 +270,14 @@ Deck<Item> DeckBuilder::create_item_deck(
 
     /* Correct rounding errors by adding
     or removing Potions and Elixirs */
-    // int correction(totalMaxNumCards - static_cast<int>(deck.size()));
-    
-    // <---- get sum here
-
+    int numCards = (
+            potions.size()
+            + poisons.size()
+            + elixirs.size()
+            + revives.size()
+            + baits.size()
+        );
+    int correction(totalMaxNumCards - numCards);
     int index(0);
     while(correction > 0)
     {
@@ -397,7 +286,7 @@ Deck<Item> DeckBuilder::create_item_deck(
             case (0):
                 potions.emplace_back(Item(
                         this->uidIndex++,
-                        0,
+                        COMMON,
                         POTION,
                         maxPossibleStatPoints,
                         false
@@ -406,7 +295,7 @@ Deck<Item> DeckBuilder::create_item_deck(
             case (1):
                 elixirs.emplace_back(Item(
                         this->uidIndex++,
-                        0,
+                        COMMON,
                         ELIXIR,
                         maxPossibleStatPoints,
                         false
@@ -428,18 +317,21 @@ Deck<Item> DeckBuilder::create_item_deck(
         ++index %= 2;
         ++correction;
     }
-    Deck<Item> deck = (
-            potions
-            + poisons
-            + elixirs
-            + revives
-            + baits
-        );
+
+    deck += potions;
+    deck += poisons;
+    deck += elixirs;
+    deck += revives;
+    deck += baits;
 
     return deck;
 }
 
+template void _sequence_uids(Deck<Creature>*, int, int);
+template void _sequence_uids(Deck<Item>*, int, int);
+
 template class Deck<Creature>;
+template class Deck<Item>;
 
 };
 

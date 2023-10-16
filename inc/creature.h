@@ -1,7 +1,7 @@
 #ifndef CREATUREADVENTURES_CREATURE_H
 #define CREATUREADVENTURES_CREATURE_H
 
-#include "tieredobjectbase.h"
+#include "action.h"
 
 namespace CreatureAdventures
 {
@@ -9,8 +9,6 @@ namespace CreatureAdventures
 class ModifierBase;
 class CreatureModifier;
 class Creature;
-
-class Action;
 
 class ModifierBase : public TieredObjectBase
 {
@@ -23,7 +21,7 @@ public:
 
 public:
 
-    ModifierBase(int uidNum, int tierNum);
+    ModifierBase(int uidNum, TierIndex tierNum);
     ModifierBase(const ModifierBase& ref);
 
     ~ModifierBase();
@@ -46,7 +44,7 @@ public:
 
 public:
 
-    CreatureModifier(int uidNum, int tierNum);
+    CreatureModifier(int uidNum, TierIndex tierNum);
     CreatureModifier(const CreatureModifier& ref);
 
     ~CreatureModifier();
@@ -77,11 +75,11 @@ protected:
 public:
 
     std::vector<CreatureModifier> modifiers;
-    std::vector<Action*> availableActions;
+    std::vector<ActionIndex> availableActionIndeces;
 
 public:
 
-    Creature(int uidNum, int tierNum);
+    Creature(int uidNum, TierIndex tierNum);
     Creature(const Creature& ref);
 
     ~Creature();

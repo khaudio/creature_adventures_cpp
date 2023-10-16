@@ -5,7 +5,7 @@ namespace CreatureAdventures
 
 Item::Item(
         int uidNum,
-        int tierNum,
+        TierIndex tierNum,
         ItemIndex itemTypeIndex,
         float maxPossibleValue,
         bool isPersistent
@@ -87,5 +87,7 @@ std::vector<const char*> Item::additional_effects() const
     }
     return additionalEffects;
 }
+
+// template std::vector<Item>::iterator match_uid(std::vector<Item>, int);
 
 };

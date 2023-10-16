@@ -78,7 +78,7 @@ public:
     bool pvp;
 
     /* enum for which action is to be performed */
-    const ActionIndex type;
+    ActionIndex type;
 
     /* Absolute HP offset result for invoker.
     Can be a positive or negative float value */

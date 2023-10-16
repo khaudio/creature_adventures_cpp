@@ -3,16 +3,21 @@
 
 #include "defs.h"
 
+#include <algorithm>
 #include <array>
-#include <vector>
+#include <cmath>
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace CreatureAdventures
 {
 
 class TieredObjectBase;
+
+class Creature;
+class Item;
 
 enum TierIndex
 {
@@ -22,6 +27,9 @@ enum TierIndex
     EPIC = 3,
     LEGENDARY = 4,
 };
+
+// template <typename T>
+// std::vector<T>::iterator match_uid(std::vector<T> vec, int uidNum);
 
 class TieredObjectBase
 {

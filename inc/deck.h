@@ -14,12 +14,14 @@ class DeckBase;
 template <typename T> class Deck;
 class DeckBuilder;
 
+template <typename T>
+void _sequence_uids(Deck<T>* deck, int length, int index = 0);
+
 class DeckBase
 {
 
 protected:
 
-    std::random_device _randDevice;
     std::mt19937_64 _randGenerator;
 
 public:
@@ -42,50 +44,74 @@ public:
 
     Deck(const Deck& ref);
 
-protected:
-
-    void _sequence_uids(Deck<T>* deck, int length, int index = 1);
-
 public:
 
-    void reset_uids(int index = 1);
+    void reset_uids(int index = 0);
     void shuffle();
     T draw();
 
-    /* Add decks together and reset UIDs */
+    /* Add decks together */
     friend Deck<T> operator+(const Deck<T>& left, const Deck<T>& right)
     {
         Deck<T> deck;
-        size_t length(left.size() + right.size());
-        deck.reserve(length);
-        for (const auto& card: left) deck.emplace_back(card);
-        for (const auto& card: right) deck.emplace_back(card);
-        deck.reset_uids(1);
+        deck.reserve(left.size() + right.size());
+        std::copy(left.begin(), left.end(), deck.begin());
+        std::copy(right.begin(), right.end(), std::back_inserter(deck));
         return deck;
     }
 
     /* Remove cards with matching UIDs */
     friend Deck<T> operator-(const Deck<T>& left, const Deck<T>& right)
     {
-        Deck<T> deck;
-        deck.reserve(left.size());
-        for (const auto& card: left) deck.emplace_back(card);
-        for (const auto& card: right)
+        Deck<T> deck(left);
+        // std::vector<Deck<T>::iterator> removable;
+        for (
+                auto existing = deck.begin();
+                existing != deck.end();
+                ++existing
+            )
         {
+            // auto it = [&(existing->uid)](auto obj){return obj.uid == uidNum;};
+            // return std::find_if(
+            //         right.begin(),
+            //         right.end(),
+            //         match
+            //     );
             for (
-                    auto existing = deck.begin();
-                    existing != deck.end();
-                    ++existing
+                    auto it = right.begin();
+                    it != right.end();
+                    ++it
                 )
-            {
-                if (existing->uid == card.uid)
                 {
-                    deck.erase(existing);
-                    break;
+                    if (it->uid == existing->uid)
+                    {
+                        // removable.push_back(existing);
+                        deck.erase(existing);
+                        break;
+                    }
                 }
-            }
         }
+
+        // for (const auto& it: removable)
+        // {
+        //     deck.erase(it);
+        // }
+
         return deck;
+    }
+
+    /* Add decks together */
+    Deck<T> operator+=(const Deck<T>& other)
+    {
+        std::copy(other.begin(), other.end(),  std::back_inserter(*this));
+        return *this;
+    }
+
+    /* Remove cards with matching UIDs */
+    Deck<T> operator-=(const Deck<T>& other)
+    {
+        *this = *this - other;
+        return *this;
     }
 
 };
@@ -158,7 +184,6 @@ public:
 
 protected:
 
-    template <typename T>
     Deck<Item> _create_single_item_deck(
             ItemIndex itemTypeIndex,
             int totalMaxNumCards,

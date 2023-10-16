@@ -3,7 +3,7 @@
 namespace CreatureAdventures
 {
 
-ModifierBase::ModifierBase(int uidNum, int tierNum) :
+ModifierBase::ModifierBase(int uidNum, TierIndex tierNum) :
 TieredObjectBase(uidNum, tierNum),
 numTurns(0),
 timed(false),
@@ -23,7 +23,7 @@ ModifierBase::~ModifierBase()
 {
 }
 
-CreatureModifier::CreatureModifier(int uidNum, int tierNum) :
+CreatureModifier::CreatureModifier(int uidNum, TierIndex tierNum) :
 ModifierBase(uidNum, tierNum),
 attackModifier(0),
 defenseModifier(0),
@@ -43,7 +43,7 @@ CreatureModifier::~CreatureModifier()
 {
 }
 
-Creature::Creature(int uidNum, int tierNum) :
+Creature::Creature(int uidNum, TierIndex tierNum) :
 TieredObjectBase(uidNum, tierNum),
 owner(""),
 baseName(""),
@@ -68,7 +68,7 @@ defenseModifier(ref.defenseModifier),
 hpModifier(ref.hpModifier),
 _currentHP(ref._currentHP),
 modifiers(std::vector<CreatureModifier>(ref.modifiers)),
-availableActions(std::vector<Action*>(ref.availableActions))
+availableActionIndeces(std::vector<ActionIndex>(ref.availableActionIndeces))
 {
 }
 
@@ -190,5 +190,7 @@ void Creature::heal(float value)
 {
     set_hp(value);
 }
+
+// template std::vector<Creature>::iterator match_uid(std::vector<Creature>, int);
 
 };

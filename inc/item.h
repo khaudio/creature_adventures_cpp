@@ -24,7 +24,7 @@ public:
 
     static constexpr const int numTypes = 5;
 
-    static constexpr const std::array<int, Item::numTypes> types = {
+    static constexpr const std::array<ItemIndex, Item::numTypes> types = {
         POTION,
         POISON,
         ELIXIR,
@@ -61,7 +61,7 @@ public:
 
     /* enum of type of item;
     i.e., Potion, Poision, Elixir, etc. */
-    const ItemIndex type;
+    ItemIndex type;
 
     /* Whether itme is persistent after use */
     bool persistent;
@@ -75,7 +75,7 @@ public:
 
     Item(
             int uidNum,
-            int tierNum,
+            TierIndex tierNum,
             ItemIndex itemTypeIndex,
             float maxPossibleValue,
             bool isPersistent = false

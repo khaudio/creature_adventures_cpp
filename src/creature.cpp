@@ -191,6 +191,4 @@ void Creature::heal(float value)
     set_hp(value);
 }
 
-// template std::vector<Creature>::iterator match_uid(std::vector<Creature>, int);
-
 };

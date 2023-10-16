@@ -88,6 +88,4 @@ std::vector<const char*> Item::additional_effects() const
     return additionalEffects;
 }
 
-// template std::vector<Item>::iterator match_uid(std::vector<Item>, int);
-
 };

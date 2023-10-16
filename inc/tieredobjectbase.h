@@ -28,9 +28,6 @@ enum TierIndex
     LEGENDARY = 4,
 };
 
-// template <typename T>
-// std::vector<T>::iterator match_uid(std::vector<T> vec, int uidNum);
-
 class TieredObjectBase
 {
 

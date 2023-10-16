@@ -6,14 +6,27 @@ namespace CreatureAdventures
 Battle::Battle() :
 _aggressorActive(true),
 _defenderActive(true),
-_isDraw(false)
+_isDraw(false),
+aggressor(nullptr),
+defender(nullptr)
+{
+}
+
+Battle::Battle(Creature* attackingCreature, Creature* defendingCreature) :
+_aggressorActive(true),
+_defenderActive(true),
+_isDraw(false),
+aggressor(attackingCreature),
+defender(defendingCreature)
 {
 }
 
 Battle::Battle(const Battle& ref) :
 _aggressorActive(ref._aggressorActive),
 _defenderActive(ref._defenderActive),
-_isDraw(ref._isDraw)
+_isDraw(ref._isDraw),
+aggressor(ref.aggressor),
+defender(ref.defender)
 {
 }
 
@@ -26,20 +39,20 @@ bool Battle::active()
     return (
             this->_aggressorActive
             && this->_defenderActive
-            && (this->aggressor.hp > 0)
-            && (this->defender.hp > 0)
+            && (this->aggressor->get_hp() > 0)
+            && (this->defender->get_hp() > 0)
         );
 }
 
 Creature* Battle::result()
 {
     this->_aggressorActive = (
-            (this->aggressor.hp > 0)
+            (this->aggressor->get_hp() > 0)
             ? this->_aggressorActive
             : false
         );
     this->_defenderActive = (
-            (this->defender.hp > 0)
+            (this->defender->get_hp() > 0)
             ? this->_defenderActive
             : false
         );
@@ -65,20 +78,44 @@ Creature* Battle::result()
     return nullptr;
 }
 
-void _switch_creatures(
-        Creature* aggresingCreature,
-        Creature* defendingCreature
+void Battle::_switch_creatures(
+        Creature* exitingCreature,
+        Creature* enteringCreature
     )
 {
     #if _DEBUG
-    if (aggressingCreature->uid == defendingCreature->uid)
+    if (
+            (exitingCreature == nullptr)
+            || (enteringCreature == nullptr)
+        )
     {
-        throw std::invalid_argument("Creatures cannot battle themselves");
+        throw std::invalid_argument("Creature is null");
     }
     #endif
 
-    this->aggressor = aggressingCreature;
-    this->defender = defendingCreature;
+    switch (exitingCreature->uid)
+    {
+        case (this->aggressor->uid):
+            #if _DEBUG
+            if (enteringCreature->uid == this->defender->uid)
+            {
+                throw std::invalid_argument("Creature may not battle itself");
+            }
+            #endif
+            this->aggressor = enteringCreature;
+            return;
+        case (this->defender->uid):
+            #if _DEBUG
+            if (enteringCreature->uid == this->aggressor->uid)
+            {
+                throw std::invalid_argument("Creature may not battle itself");
+            }
+            #endif
+            this->defender = enteringCreature;
+            return;
+        default:
+            throw std::out_of_range("Exiting creature not found in battle");
+    }
 }
 
 Action Battle::_get_next_action(std::deque<Action>* queue)
@@ -88,11 +125,15 @@ Action Battle::_get_next_action(std::deque<Action>* queue)
     return action;
 }
 
-void Battle::process_single_action(Action action, Creature* invoker, Creature* target)
+void Battle::process_single_action(
+        Action action,
+        Creature* invoker,
+        Creature* target
+    )
 {
     DEBUG_OUT("Processing action...\n");
 
-    switch (action.typeIndex)
+    switch (action.type)
     {
         case (FORFEIT):
 
@@ -111,13 +152,13 @@ void Battle::process_single_action(Action action, Creature* invoker, Creature* t
 
         case (PASS):
 
-            /* Do nothing */
+            /* Invoker does nothing */
             return;
 
         case (SWITCH):
 
             /* Target is creature to switch to */
-            if (target->hp <= 0)
+            if (target->get_hp() <= 0)
             {
                 throw std::invalid_argument("Creature hp must be > 0\n");
             }

@@ -11,8 +11,6 @@ namespace CreatureAdventures
 
 class Action;
 
-class Creature;
-
 /* Actions are taken by creatures to cause
 damage or healing during battles.
 Some actions may be used outside of battle */
@@ -39,43 +37,43 @@ public:
     static constexpr const int numTypes = 10;
 
     static constexpr const std::array<ActionIndex, Action::numTypes> types = {
-        STRIKE,
-        MEDITATE,
-        BRACE,
-        DODGE,
-        INNERPEACE,
-        SWITCH,
-        FORFEIT,
-        ESCAPE,
-        CATCH,
-        PASS,
-    };
+            STRIKE,
+            MEDITATE,
+            BRACE,
+            DODGE,
+            INNERPEACE,
+            SWITCH,
+            FORFEIT,
+            ESCAPE,
+            CATCH,
+            PASS,
+        };
 
     static constexpr const std::array<const char*, Action::numTypes> names = {
-        "Strike",
-        "Meditate",
-        "Brace",
-        "Dodge",
-        "InnerPeace",
-        "Switch",
-        "Forfeit",
-        "Escape",
-        "Catch",
-        "Pass",
-    };
+            "Strike",
+            "Meditate",
+            "Brace",
+            "Dodge",
+            "InnerPeace",
+            "Switch",
+            "Forfeit",
+            "Escape",
+            "Catch",
+            "Pass",
+        };
 
     static constexpr const std::array<const char*, Action::numTypes> descriptions = {
-        "Attack an enemy for damage",
-        "Chance to increase attack",
-        "Chance to increase defense",
-        "Chance to evade incoming attack",
-        "Heal for half max HP",
-        "Switch to another creature",
-        "Concede defeat and end the battle",
-        "Run from battle",
-        "Attempt to catch a wild creature",
-        "Forego action",
-    };
+            "Attack an enemy for damage",
+            "Chance to increase attack",
+            "Chance to increase defense",
+            "Chance to evade incoming attack",
+            "Heal for half max HP",
+            "Switch to another creature",
+            "Concede defeat and end the battle",
+            "Run from battle",
+            "Attempt to catch a wild creature",
+            "Forego action",
+        };
 
 public:
 
@@ -105,6 +103,13 @@ public:
 
     ~Action();
 
+protected:
+
+    /* Enforce that type is valid */
+    void _validate_type();
+
+public:
+
     const char* name() const;
     const char* description() const;
 
@@ -127,8 +132,6 @@ public:
     and applies it as a negative hp offset
     to invoker (damage) */
     void damage_invoker(float invokerHPLost);
-
-    void process(Creature* invoker, Creature* target);
 
 };
 

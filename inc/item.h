@@ -25,28 +25,28 @@ public:
     static constexpr const int numTypes = 5;
 
     static constexpr const std::array<ItemIndex, Item::numTypes> types = {
-        POTION,
-        POISON,
-        ELIXIR,
-        REVIVE,
-        BAIT,
-    };
+            POTION,
+            POISON,
+            ELIXIR,
+            REVIVE,
+            BAIT,
+        };
 
     static constexpr const std::array<const char*, Item::numTypes> names = {
-        "Potion",
-        "Poison",
-        "Elixir",
-        "Revive",
-        "Bait",
-    };
+            "Potion",
+            "Poison",
+            "Elixir",
+            "Revive",
+            "Bait",
+        };
 
     static constexpr const std::array<const char*, Item::numTypes> descriptions = {
-        "Heals a creature for a specified amount",
-        "Poisons an enemy creature for unmitigated damage",
-        "Raises attack or defense power of a creature",
-        "Revives a creature with depleted HP",
-        "Raises chances of successfully catching wild creatures",
-    };
+            "Heals a creature for a specified amount",
+            "Poisons an enemy creature for unmitigated damage",
+            "Raises attack or defense power of a creature",
+            "Revives a creature with depleted HP",
+            "Raises chances of successfully catching wild creatures",
+        };
 
     /* Relative ratios of stat points available to items in each tier */
     static constexpr const std::array<std::pair<float, float>, Item::numTypes> tierQualityThresholds = {{
@@ -83,6 +83,13 @@ public:
     Item(const Item& ref);
 
     ~Item();
+
+protected:
+
+    /* Enforce that type is valid */
+    void _validate_type();
+
+public:
 
     float get();
 

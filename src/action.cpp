@@ -7,15 +7,7 @@ Action::Action(ActionIndex actionTypeIndex) :
 type(actionTypeIndex)
 {
     #if _DEBUG
-    auto iter = std::find(
-            Action::types.begin(),
-            Action::types.end(),
-            this->type
-        );
-    if (iter == types.end())
-    {
-        throw std::out_of_range("Action type index not found");
-    }
+    _validate_type();
     #endif
 }
 
@@ -28,6 +20,16 @@ evasive(ref.evasive),
 evaded(ref.evaded)
 {
     #if _DEBUG
+    _validate_type();
+    #endif
+}
+
+Action::~Action()
+{
+}
+
+void Action::_validate_type()
+{
     auto iter = std::find(
             Action::types.begin(),
             Action::types.end(),
@@ -37,11 +39,6 @@ evaded(ref.evaded)
     {
         throw std::out_of_range("Action type index not found");
     }
-    #endif
-}
-
-Action::~Action()
-{
 }
 
 const char* Action::name() const
@@ -72,11 +69,6 @@ void Action::damage_target(float targetHPLost)
 void Action::damage_invoker(float invokerHPLost)
 {
     this->invokerHPDelta -= invokerHPLost;
-}
-
-void Action::process(Creature* invoker, Creature* target)
-{
-    // float multiplier = random_multiplier_roll<float>();
 }
 
 };

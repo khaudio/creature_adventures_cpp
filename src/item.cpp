@@ -15,15 +15,7 @@ type(itemTypeIndex),
 persistent(isPersistent)
 {
     #if _DEBUG
-    auto iter = std::find(
-            Item::types.begin(),
-            Item::types.end(),
-            this->type
-        );
-    if (iter == Item::types.end())
-    {
-        throw std::out_of_range("Item type index not found");
-    }
+    _validate_type();
     #endif
 
     this->value = std::round(
@@ -40,6 +32,12 @@ value(ref.value),
 additionalEffects(ref.additionalEffects)
 {
     #if _DEBUG
+    _validate_type();
+    #endif
+}
+
+void Item::_validate_type()
+{
     auto iter = std::find(
             Item::types.begin(),
             Item::types.end(),
@@ -49,7 +47,6 @@ additionalEffects(ref.additionalEffects)
     {
         throw std::out_of_range("Item type index not found");
     }
-    #endif
 }
 
 Item::~Item()

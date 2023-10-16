@@ -35,6 +35,14 @@ public:
 
     static constexpr const int numTiers = 5;
 
+    static constexpr const std::array<TierIndex, TieredObjectBase::numTiers> tiers = {
+            COMMON,
+            UNCOMMON,
+            RARE,
+            EPIC,
+            LEGENDARY,
+        };
+
     /* Names for each tier, indicating quality */
     static constexpr const std::array<const char*, TieredObjectBase::numTiers> tierNames = {
             "Common",

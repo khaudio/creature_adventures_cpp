@@ -169,7 +169,7 @@ Deck<Creature> DeckBuilder::create_creature_deck(
 
     /* Add cards to each tier */
     float weightVariance(0.0);
-    for (int tier(0); tier < Creature::numTiers; ++tier)
+    for (const TierIndex& tier: Creature::tiers)
     {
         /* Allow more chaotic stat distribution per tier */
         weightVariance += 0.035f;
@@ -177,7 +177,7 @@ Deck<Creature> DeckBuilder::create_creature_deck(
         {
             deck.emplace_back(_create_creature(
                     this->uidIndex++,
-                    static_cast<TierIndex>(tier),
+                    tier,
                     maxPossibleStatPoints,
                     weightVariance
                 ));
@@ -206,13 +206,13 @@ Deck<Item> DeckBuilder::_create_single_item_deck(
     deck.reserve(sum);
 
     /* Add cards to each tier */
-    for (int tier(COMMON); tier < Item::numTiers; ++tier)
+    for (const TierIndex& tier: Item::tiers)
     {
         for (int i(0); i < cardsPerTier[tier]; ++i)
         {
             deck.emplace_back(Item(
                     this->uidIndex++,
-                    static_cast<TierIndex>(tier),
+                    tier,
                     itemTypeIndex,
                     maxPossibleStatPoints,
                     false

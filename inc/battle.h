@@ -29,7 +29,7 @@ protected:
 public:
 
     /* Creature that initiated the battle */
-    Creature* aggresor;
+    Creature* aggressor;
 
     /* Creature targeted by attacker */
     Creature* defender;
@@ -40,6 +40,7 @@ public:
 public:
 
     Battle();
+    Battle(Creature* attackingCreature, Creature* defendingCreature);
     Battle(const Battle& ref);
 
     ~Battle();
@@ -54,7 +55,7 @@ public:
 protected:
 
     void _switch_creatures(
-            Creature* aggresingCreature,
+            Creature* aggressingCreature,
             Creature* defendingCreature
         );
 

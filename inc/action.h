@@ -3,31 +3,19 @@
 
 #include "tieredobjectbase.h"
 #include "dice.h"
+#include "creature.h"
 
 #include <memory>
 
 namespace CreatureAdventures
 {
 
+/* Declarations */
 class Action;
 
 /* Actions are taken by creatures to cause
 damage or healing during battles.
 Some actions may be used outside of battle */
-
-enum ActionIndex
-{
-    STRIKE = 0,
-    MEDITATE = 1,
-    BRACE = 2,
-    DODGE = 3,
-    INNERPEACE = 4,
-    SWITCH = 5,
-    FORFEIT = 6,
-    ESCAPE = 7,
-    CATCH = 8,
-    PASS = 9,
-};
 
 class Action
 {
@@ -80,12 +68,9 @@ public:
     /* enum for which action is to be performed */
     ActionIndex type;
 
-    /* Whether the action is between two players */
-    bool pvp;
-
     /* Values to scale HP by */
-    float invokerHPScaler = 0;
-    float targetHPScaler = 0;
+    float invokerHPScaler = 1.0f;
+    float targetHPScaler = 1.0f;
 
     /* Absolute HP offset;
     Can be a positive or negative float value.
@@ -102,9 +87,18 @@ public:
     or whether target evaded */
     bool evaded = false;
 
+    Creature* invoker;
+    Creature* target;
+
+    bool applied = false;
+
 public:
 
-    Action(ActionIndex actionType, bool isPvp);
+    Action(
+            ActionIndex actionTypeIndex,
+            Creature* invokingCreature,
+            Creature* targetedCreature
+        );
     Action(const Action& ref);
 
     ~Action();
@@ -114,30 +108,34 @@ protected:
     /* Enforce that the action is of a valid type */
     void _validate_type();
 
+    /* Throw an error if the action has already been applied */
+    void _check_applied();
+
 public:
 
     const char* name() const;
     const char* description() const;
 
-    /* Scales creature's current HP
-    by a factor of the provided value */
+protected:
 
-    void scale_invoker_hp(float value);
-    void scale_target_hp(float value);
+    /* Return dice roll by invoking creature */
+    float _get_roll();
 
-    /* Offsets creature's HP
-    by a fixed value */
+private:
 
-    void offset_invoker_hp(float invokerHPOffset);
-    void offset_target_hp(float targetHPOffset);
+    void _strike();
+    void _meditate();
+    void _brace();
+    void _dodge();
+    void _inner_peace();
 
-    /* Return values to scale and offset by */
+public:
 
-    float get_invoker_scale();
-    float get_invoker_offset();
+    /* Run the action and calculate result */
+    void process();
 
-    float get_target_scale();
-    float get_target_offset();
+    /* Apply result to Creatures */
+    void apply();
 
 };
 

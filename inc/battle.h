@@ -2,6 +2,7 @@
 #define CREATUREADVENTURES_BATTLE_H
 
 #include "creature.h"
+#include "action.h"
 
 #include <deque>
 
@@ -25,13 +26,6 @@ protected:
     /* True when battle is a tie */
     bool _isDraw;
 
-    /* Queue of actions to be executed */
-    std::deque<Action> _aggressorActionQueue;
-    std::deque<Action> _defenderActionQueue;
-
-    Action _lastAggressorAction;
-    Action _lastDefenderAction;
-
 public:
 
     /* Creature that initiated the battle */
@@ -40,16 +34,25 @@ public:
     /* Creature targeted by attacker */
     Creature* defender;
 
-
     /* True if both players are human */
     bool pvp;
+
+protected:
+
+    // /* Queue of actions to be executed */
+    // std::deque<Action> _aggressorActionQueue;
+    // std::deque<Action> _defenderActionQueue;
+
+    Action _lastAggressorAction;
+    Action _lastDefenderAction;
 
 public:
 
     Battle();
     Battle(
             Creature* attackingCreature,
-            Creature* defendingCreature
+            Creature* defendingCreature,
+            bool isPvp
         );
     Battle(const Battle& ref);
 
@@ -64,30 +67,27 @@ public:
 
 public:
 
-    void strike(Action action, Creature* invoker, Creature* target);
+    void strike(Action action);
 
-protected:
+    void forfeit(Action action);
 
-    void _switch_creatures(
-            Creature* exitingCreature,
-            Creature* enteringCreature
-        );
+    void switch_creatures(Action action);
 
-    Action _get_next_action(std::deque<Action>* queue);
+    void escape(Action action);
+
+// protected:
+
+//     Action _get_next_action(std::deque<Action>* queue);
 
 public:
 
     /* Process a single action; in normal pvp play,
     actions should be processed in pairs */
-    void process_single_action(
-            Action action,
-            Creature* invoker,
-            Creature* target
-        );
+    void process_single_action(Action action);
 
-    /* Process actions in pairs so that
-    combat happens simultaneously */
-    void process_action_pair_from_queue();
+    // /* Process actions in pairs so that
+    // combat happens simultaneously */
+    // void process_action_pair_from_queue();
 
 };
 

@@ -26,6 +26,26 @@ enum TierIndex
     LEGENDARY = 4,
 };
 
+enum ActionIndex
+{
+    STRIKE = 0,
+    MEDITATE = 1,
+    BRACE = 2,
+    DODGE = 3,
+    INNERPEACE = 4,
+    SWITCH = 5,
+    FORFEIT = 6,
+    ESCAPE = 7,
+    CATCH = 8,
+    PASS = 9,
+};
+
+template <typename T>
+void trim_minimum(T* value, T minimum = 0);
+
+template <typename T>
+void trim_maximum(T* value, T maximum);
+
 class TieredObjectBase
 {
 
@@ -68,6 +88,11 @@ public:
             {0.70f, 0.80f},
             {0.80f, 1.00f}
         }};
+
+    friend bool operator==(const TieredObjectBase& left, const TieredObjectBase& right)
+    {
+        return (left.uid == right.uid);
+    }
 
 public:
 

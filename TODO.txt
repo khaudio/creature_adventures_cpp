@@ -1,7 +1,11 @@
 # TODO
 
-- dice roll range 0.0 - 1.0
-    - spawn shared_ptr dice per battle that is used for action rolls
+- creature
+    - trim attribute minimums so there are not negative attack values, etc
+
+- action
+    - trim action deltas when applied
+
 - json state save
 - player
 - battle

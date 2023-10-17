@@ -3,8 +3,8 @@
 namespace CreatureAdventures
 {
 
-ModifierBase::ModifierBase(int uidNum, TierIndex tierNum) :
-TieredObjectBase(uidNum, tierNum),
+ModifierBase::ModifierBase() :
+uid(ModifierBase::uidIndex++),
 numTurns(0),
 timed(false),
 activeDuringCombat(false)
@@ -12,7 +12,7 @@ activeDuringCombat(false)
 }
 
 ModifierBase::ModifierBase(const ModifierBase& ref) :
-TieredObjectBase(ref),
+uid(ref.uid),
 numTurns(ref.numTurns),
 timed(ref.timed),
 activeDuringCombat(ref.activeDuringCombat)
@@ -23,11 +23,13 @@ ModifierBase::~ModifierBase()
 {
 }
 
-CreatureModifier::CreatureModifier(int uidNum, TierIndex tierNum) :
-ModifierBase(uidNum, tierNum),
+CreatureModifier::CreatureModifier() :
+ModifierBase(),
 attackModifier(0),
 defenseModifier(0),
-hpModifier(0)
+hpModifier(0),
+rollMinModifier(0),
+rollMaxModifier(0)
 {
 }
 
@@ -35,7 +37,9 @@ CreatureModifier::CreatureModifier(const CreatureModifier& ref) :
 ModifierBase(ref),
 attackModifier(ref.attackModifier),
 defenseModifier(ref.defenseModifier),
-hpModifier(ref.hpModifier)
+hpModifier(ref.hpModifier),
+rollMinModifier(ref.rollMinModifier),
+rollMaxModifier(ref.rollMaxModifier)
 {
 }
 
@@ -82,59 +86,96 @@ std::string Creature::get_owner() const
     return this->owner;
 }
 
-void Creature::_set_permanent_attack(float value)
+void Creature::_set_persistent_attack(float value)
 {
     this->attackModifier = value - this->baseAttack;
+
+    /* Minimum attack 0 */
+    trim_minimum<float>(&this->attackModifier, 0);
 }
 
-float Creature::_get_permanent_attack() const
+float Creature::_get_persistent_attack() const
 {
-    return this->baseAttack + this->attackModifier;
+    float sum(this->baseAttack + this->attackModifier);
+
+    /* Minimum attack 0 */
+    trim_minimum<float>(&sum, 0);
+
+    return sum;
 }
 
 float Creature::get_attack() const
 {
     float sum(0.0);
+
     for (const auto& mod: this->modifiers)
     {
         sum += mod.attackModifier;
     }
-    return (this->baseAttack + this->attackModifier + sum);
+    sum += (this->baseAttack + this->attackModifier);
+
+    /* Minimum attack 0 */
+    trim_minimum<float>(&sum, 0);
+
+    return sum;
 }
 
-void Creature::_set_permanent_defense(float value)
+void Creature::_set_persistent_defense(float value)
 {
     this->defenseModifier = value - this->baseDefense;
+
+    /* Minimum HP 1 */
+    trim_minimum(&this->defenseModifier, (-(this->baseDefense - 1)));
 }
 
-float Creature::_get_permanent_defense() const
+float Creature::_get_persistent_defense() const
 {
-    return this->baseDefense + this->defenseModifier;
+    float sum(this->baseDefense + this->defenseModifier);
+
+    /* Minimum HP 1 */
+    trim_minimum<float>(&sum, (-(this->baseDefense - 1)));
+
+    return sum;
 }
 
 float Creature::get_defense() const
 {
     float sum(0.0);
+
     for (const auto& mod: this->modifiers)
     {
         sum += mod.defenseModifier;
     }
-    return (this->baseDefense + this->defenseModifier + sum);
+    sum += (this->baseDefense + this->defenseModifier);
+
+    /* Minimum HP 1 */
+    trim_minimum<float>(&sum, 1);
+
+    return sum;
 }
 
 void Creature::set_max_hp(float value)
 {
     this->hpModifier = value - this->baseMaxHP;
+
+    /* Minimum HP 1 */
+    trim_minimum<float>(&this->hpModifier, 1);
 }
 
 float Creature::get_max_hp() const
 {
     float sum(0.0);
+
     for (const auto& mod: this->modifiers)
     {
         sum += mod.hpModifier;
     }
-    return (this->baseMaxHP + this->hpModifier + sum);
+    sum += (this->baseMaxHP + this->hpModifier);
+
+    /* Minimum HP 1 */
+    trim_minimum<float>(&sum, 1);
+
+    return sum;
 }
 
 void Creature::set_hp(float value)
@@ -150,7 +191,7 @@ void Creature::set_hp(float value)
     }
     else
     {
-        this->_currentHP = value;
+        this->_currentHP = std::round(value);
     }
 }
 

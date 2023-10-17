@@ -10,7 +10,7 @@
 
 namespace CreatureAdventures
 {
-
+/* Declarations */
 class CoreBase;
 
 class CoreBase : public TieredObjectBase

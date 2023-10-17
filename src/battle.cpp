@@ -78,6 +78,15 @@ Creature* Battle::result()
     return nullptr;
 }
 
+void Battle::strike(Action action, Creature* invoker, Creature* target)
+{
+    
+    // {0.0, 0.0}
+    // {0.2, 0.3}
+    // {0.4, 0.97}
+    // {0.97, 1.0}
+}
+
 void Battle::_switch_creatures(
         Creature* exitingCreature,
         Creature* enteringCreature
@@ -169,8 +178,19 @@ void Battle::process_single_action(
 
             /* Attempt to end the battle */
             ;
-
     }
+
+    /* Save the action in case it is repeated */
+    this->_lastAggressorAction = (
+            (invoker->uid == this->aggressor->uid)
+            ? action
+            : this->_lastAggressorAction
+        );
+    this->_lastDefenderAction = (
+            (invoker->uid == this->defender->uid)
+            ? action
+            : this->_lastDefenderAction
+        );
 }
 
 void Battle::process_action_pair_from_queue()
@@ -192,8 +212,6 @@ void Battle::process_action_pair_from_queue()
 
     Action aggressorAction(_get_next_action(&this->_aggressorActionQueue));
     Action defenderAction(_get_next_action(&this->_defenderActionQueue));
-
-
 
 }
 

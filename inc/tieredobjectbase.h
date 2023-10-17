@@ -14,10 +14,8 @@
 namespace CreatureAdventures
 {
 
+/* Declarations */
 class TieredObjectBase;
-
-class Creature;
-class Item;
 
 enum TierIndex
 {

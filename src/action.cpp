@@ -3,8 +3,9 @@
 namespace CreatureAdventures
 {
 
-Action::Action(ActionIndex actionTypeIndex) :
-type(actionTypeIndex)
+Action::Action(ActionIndex actionTypeIndex, bool isPvp) :
+type(actionTypeIndex),
+pvp(isPvp)
 {
     #if _DEBUG
     _validate_type();
@@ -14,8 +15,10 @@ type(actionTypeIndex)
 Action::Action(const Action& ref) :
 type(ref.type),
 pvp(ref.pvp),
-invokerHPDelta(ref.invokerHPDelta),
-targetHPDelta(ref.targetHPDelta),
+invokerHPScaler(ref.invokerHPScaler),
+targetHPScaler(ref.targetHPScaler),
+invokerHPOffset(ref.invokerHPOffset),
+targetHPOffset(ref.targetHPOffset),
 evasive(ref.evasive),
 evaded(ref.evaded)
 {
@@ -51,24 +54,44 @@ const char* Action::description() const
     return Action::descriptions.at(this->type);
 }
 
-void Action::offset_target_hp(float targetHPOffset)
+void Action::scale_invoker_hp(float value)
 {
-    this->targetHPDelta += targetHPOffset;
+    this->invokerHPScaler = value;
+}
+
+void Action::scale_target_hp(float value)
+{
+    this->targetHPScaler = value;
 }
 
 void Action::offset_invoker_hp(float invokerHPOffset)
 {
-    this->invokerHPDelta += invokerHPOffset;
+    this->invokerHPOffset += invokerHPOffset;
 }
 
-void Action::damage_target(float targetHPLost)
+void Action::offset_target_hp(float targetHPOffset)
 {
-    this->targetHPDelta -= targetHPLost;
+    this->targetHPOffset += targetHPOffset;
 }
 
-void Action::damage_invoker(float invokerHPLost)
+float Action::get_invoker_scale()
 {
-    this->invokerHPDelta -= invokerHPLost;
+    return this->invokerHPScaler;
+}
+
+float Action::get_invoker_offset()
+{
+    return this->invokerHPOffset;
+}
+
+float Action::get_target_scale()
+{
+    return this->targetHPScaler;
+}
+
+float Action::get_target_offset()
+{
+    return this->targetHPOffset;
 }
 
 };

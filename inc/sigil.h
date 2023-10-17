@@ -6,6 +6,7 @@
 namespace CreatureAdventures
 {
 
+/* Declarations */
 class Artifact;
 class Sigil;
 

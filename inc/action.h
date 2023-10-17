@@ -77,35 +77,41 @@ public:
 
 public:
 
-    bool pvp;
-
     /* enum for which action is to be performed */
     ActionIndex type;
 
-    /* Absolute HP offset result for invoker.
-    Can be a positive or negative float value */
-    float invokerHPDelta = 0;
+    /* Whether the action is between two players */
+    bool pvp;
 
-    /* Absolute HP offset result for target.
-    Can be a positive or negative float value */
-    float targetHPDelta = 0;
+    /* Values to scale HP by */
+    float invokerHPScaler = 0;
+    float targetHPScaler = 0;
 
-    /* Did invoker successfully complete an evasive maneuver */
+    /* Absolute HP offset;
+    Can be a positive or negative float value.
+    Positive values add HP (heal);
+    negative values remove HP (damage)*/
+    float invokerHPOffset = 0;
+    float targetHPOffset = 0;
+
+    /* Whether invoker successfully completed
+    an evasive maneuver */
     bool evasive = false;
 
-    /* Did invoker fail to make contact or did target evade */
+    /* Whether invoker failed to make contact
+    or whether target evaded */
     bool evaded = false;
 
 public:
 
-    Action(ActionIndex actionType);
+    Action(ActionIndex actionType, bool isPvp);
     Action(const Action& ref);
 
     ~Action();
 
 protected:
 
-    /* Enforce that type is valid */
+    /* Enforce that the action is of a valid type */
     void _validate_type();
 
 public:
@@ -113,25 +119,25 @@ public:
     const char* name() const;
     const char* description() const;
 
-    /* Modifies target creature's HP.
-    Positive values add HP (heal),
-    negative values remove HP (damage) */
+    /* Scales creature's current HP
+    by a factor of the provided value */
+
+    void scale_invoker_hp(float value);
+    void scale_target_hp(float value);
+
+    /* Offsets creature's HP
+    by a fixed value */
+
+    void offset_invoker_hp(float invokerHPOffset);
     void offset_target_hp(float targetHPOffset);
 
-    /* Modifies action invoking creature's HP.
-    Positive values add HP (heal),
-    negative values remove HP (damage) */
-    void offset_invoker_hp(float invokerHPOffset);
-    
-    /* Takes positive value as argument
-    and applies it as a negative hp offset
-    to target (damage) */
-    void damage_target(float targetHPLost);
+    /* Return values to scale and offset by */
 
-    /* Takes positive value as argument
-    and applies it as a negative hp offset
-    to invoker (damage) */
-    void damage_invoker(float invokerHPLost);
+    float get_invoker_scale();
+    float get_invoker_offset();
+
+    float get_target_scale();
+    float get_target_offset();
 
 };
 

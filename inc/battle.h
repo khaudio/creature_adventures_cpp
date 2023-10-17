@@ -8,6 +8,9 @@
 namespace CreatureAdventures
 {
 
+/* Declarations */
+class Battle;
+
 class Battle
 {
 
@@ -26,6 +29,9 @@ protected:
     std::deque<Action> _aggressorActionQueue;
     std::deque<Action> _defenderActionQueue;
 
+    Action _lastAggressorAction;
+    Action _lastDefenderAction;
+
 public:
 
     /* Creature that initiated the battle */
@@ -34,13 +40,17 @@ public:
     /* Creature targeted by attacker */
     Creature* defender;
 
+
     /* True if both players are human */
     bool pvp;
 
 public:
 
     Battle();
-    Battle(Creature* attackingCreature, Creature* defendingCreature);
+    Battle(
+            Creature* attackingCreature,
+            Creature* defendingCreature
+        );
     Battle(const Battle& ref);
 
     ~Battle();
@@ -52,11 +62,15 @@ public:
     otherwise return nullptr */
     Creature* result();
 
+public:
+
+    void strike(Action action, Creature* invoker, Creature* target);
+
 protected:
 
     void _switch_creatures(
-            Creature* aggressingCreature,
-            Creature* defendingCreature
+            Creature* exitingCreature,
+            Creature* enteringCreature
         );
 
     Action _get_next_action(std::deque<Action>* queue);
@@ -65,7 +79,11 @@ public:
 
     /* Process a single action; in normal pvp play,
     actions should be processed in pairs */
-    void process_single_action(Action action, Creature* invoker, Creature* target);
+    void process_single_action(
+            Action action,
+            Creature* invoker,
+            Creature* target
+        );
 
     /* Process actions in pairs so that
     combat happens simultaneously */

@@ -6,6 +6,7 @@
 namespace CreatureAdventures
 {
 
+/* Declarations */
 class Item;
 
 enum ItemIndex

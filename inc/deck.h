@@ -10,6 +10,7 @@
 namespace CreatureAdventures
 {
 
+/* Declarations */
 class DeckBase;
 template <typename T> class Deck;
 class DeckBuilder;

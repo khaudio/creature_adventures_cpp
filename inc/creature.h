@@ -6,6 +6,7 @@
 namespace CreatureAdventures
 {
 
+/* Declarations */
 class ModifierBase;
 class CreatureModifier;
 class Creature;

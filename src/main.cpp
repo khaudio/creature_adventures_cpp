@@ -18,6 +18,7 @@ int main(int argc, char** argv)
     {
         Creature card = creatureDeck.draw();
         DEBUG_OUT(std::setw(12));
+        DEBUG_OUT(typeid(card).name() << std::setw(20));
         DEBUG_OUT(Creature::tierNames[card.tier] << std::setw(8));
         DEBUG_OUT(card.baseAttack << std::setw(4));
         DEBUG_OUT(card.baseDefense << std::setw(4));
@@ -38,15 +39,28 @@ int main(int argc, char** argv)
         DEBUG_OUT(card.type << std::setw(12));
         DEBUG_OUT(Item::tierNames[card.tier] << std::setw(8));
         DEBUG_OUT(card.uid << std::setw(12));
-        DEBUG_OUT(card.name() << std::setw(80));
-        DEBUG_OUT(card.description() << std::setw(20));
+        DEBUG_OUT(card.name() << std::setw(60));
+        DEBUG_OUT(card.description() << std::setw(16));
         DEBUG_OUT("uid:" << std::setw(4));
         DEBUG_OUT((card.persistent ? "is" : "is not") << " persistent\n");
     }
 
     for (int i(0); i < 10; ++i)
     {
-        DEBUG_OUT(random_multiplier_roll<float>(0.0, 1.0) << '\n');
+        float roll = random_multiplier_roll<float>(0.0, 1.0);
+        DEBUG_OUT(std::setw(12) << roll << " ");
+        int maxLen(80);
+        int length(roll * maxLen);
+        int remaining(maxLen - length);
+        for (int j(0); j < maxLen; ++j)
+        {
+            if ((j >= (maxLen - 1)) && (length >= (maxLen - 1))) DEBUG_OUT("+")
+            else if (j <= length) DEBUG_OUT("-")
+            else if (j == (maxLen - 1)) DEBUG_OUT("|")
+            else if ((length < j) && (j < (maxLen - 1))) DEBUG_OUT(" ")
+        }
+        if (roll >= 1.0) DEBUG_OUT(" <---!!!")
+        DEBUG_OUT('\n');
     }
 
     return 0;

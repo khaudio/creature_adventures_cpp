@@ -270,14 +270,14 @@ Deck<Item> DeckBuilder::create_item_deck(
 
     /* Correct rounding errors by adding
     or removing Potions and Elixirs */
-    int numCards = (
+    size_t numCards = (
             potions.size()
             + poisons.size()
             + elixirs.size()
             + revives.size()
             + baits.size()
         );
-    int correction(totalMaxNumCards - numCards);
+    int correction(totalMaxNumCards - static_cast<int>(numCards));
     int index(0);
     while(correction > 0)
     {

@@ -58,6 +58,12 @@ public:
 
     ~Battle();
 
+protected:
+
+    void _validate_action(Action action);
+
+public:
+
     bool active();
 
     /* Check victory conditions and return

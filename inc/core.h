@@ -7,6 +7,7 @@
 #include "action.h"
 #include "dice.h"
 #include "deck.h"
+#include "artifact.h"
 
 namespace CreatureAdventures
 {

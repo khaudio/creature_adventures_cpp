@@ -29,12 +29,12 @@ public:
             MEDITATE,
             BRACE,
             DODGE,
-            INNERPEACE,
             SWITCH,
             FORFEIT,
             ESCAPE,
             CATCH,
             PASS,
+            INNERPEACE,
         };
 
     static constexpr const std::array<const char*, Action::numTypes> names = {
@@ -42,12 +42,12 @@ public:
             "Meditate",
             "Brace",
             "Dodge",
-            "InnerPeace",
             "Switch",
             "Forfeit",
             "Escape",
             "Catch",
             "Pass",
+            "InnerPeace",
         };
 
     static constexpr const std::array<const char*, Action::numTypes> descriptions = {
@@ -55,12 +55,12 @@ public:
             "Chance to increase attack",
             "Chance to increase defense",
             "Chance to evade incoming attack",
-            "Heal for half max HP",
             "Switch to another creature",
             "Concede defeat and end the battle",
             "Run from battle",
             "Attempt to catch a wild creature",
             "Forego action",
+            "Heal for half max HP",
         };
 
 public:
@@ -108,12 +108,12 @@ protected:
     /* Enforce that the action is of a valid type */
     void _validate_type();
 
-    /* Throw an error if the action has already been applied */
-    void _check_applied();
-
 public:
 
+    /* String literal of action type */
     const char* name() const;
+
+    /* Returns string literal of action description */
     const char* description() const;
 
 protected:
@@ -123,16 +123,36 @@ protected:
 
 private:
 
+    /* Run action
+
+    These should not be called directly;
+    instead, use process() and then apply() */
+
+    /* Calcualte result if action type is STRIKE */
     void _strike();
+
+    /* Calculate result if action type is MEDITATE */
     void _meditate();
+
+    /* Calculate result if action type is BRACE */
     void _brace();
-    void _dodge();
+
+    /* Calculate result if action type is DODGE */
+    void _dodge(float multiplier = 1.0f);
+
+    /* Roll for escape chance */
+    void _escape(float multiplier = 1.0f);
+
+    /* Roll for catch chance */
+    void _catch(float multiplier = 1.0f);
+
+    /* Calculate result if action type is INNERPEACE */
     void _inner_peace();
 
 public:
 
     /* Run the action and calculate result */
-    void process();
+    void process(float multiplier = 1.0f);
 
     /* Apply result to Creatures */
     void apply();

@@ -50,14 +50,6 @@ void Action::_validate_type()
     }
 }
 
-void Action::_check_applied()
-{
-    if (this->applied)
-    {
-        throw std::logic_error("Invalid; Action already applied");
-    }
-}
-
 const char* Action::name() const
 {
     return Action::names.at(this->type);
@@ -83,6 +75,13 @@ float Action::_get_roll()
 
 void Action::_strike()
 {
+    #if _DEBUG
+    if (this->type != STRIKE)
+    {
+        throw std::logic_error("Invalid function for action type");
+    }
+    #endif
+
     float roll(_get_roll());
 
     if (roll < 0.12f)
@@ -142,6 +141,7 @@ void Action::_strike()
     #if _DEBUG
     else
     {
+        /* Path should never be reached */
         throw std::out_of_range("Invalid roll value");
     }
     #endif
@@ -149,6 +149,13 @@ void Action::_strike()
 
 void Action::_meditate()
 {
+    #if _DEBUG
+    if (this->type != MEDITATE)
+    {
+        throw std::logic_error("Invalid function for action type");
+    }
+    #endif
+
     float roll(_get_roll());
     CreatureModifier modifier;
     modifier.numTurns = 2;
@@ -191,7 +198,14 @@ void Action::_meditate()
 
         DEBUG_OUT(" for +100% persistent attack power");
         DEBUG_OUT(" (" << this->invoker->get_attack() << ")\n");
+    } 
+    #if _DEBUG
+    else
+    {
+        /* Path should never be reached */
+        throw std::out_of_range("Invalid roll value");
     }
+    #endif
 
     if (modifier.attackModifier)
     {
@@ -201,6 +215,13 @@ void Action::_meditate()
 
 void Action::_brace()
 {
+    #if _DEBUG
+    if (this->type != BRACE)
+    {
+        throw std::logic_error("Invalid function for action type");
+    }
+    #endif
+
     float roll(_get_roll());
     CreatureModifier modifier;
     modifier.numTurns = 2;
@@ -244,6 +265,13 @@ void Action::_brace()
         DEBUG_OUT(" for +200% persistent defense");
         DEBUG_OUT(" (" << this->invoker->get_defense() << ")\n");
     }
+    #if _DEBUG
+    else
+    {
+        /* Path should never be reached */
+        throw std::out_of_range("Invalid roll value");
+    }
+    #endif
 
     if (modifier.defenseModifier)
     {
@@ -252,9 +280,16 @@ void Action::_brace()
 
 }
 
-void Action::_dodge()
+void Action::_dodge(float multiplier)
 {
-    float roll(_get_roll() * invoker->evasiveness);
+    #if _DEBUG
+    if (this->type != DODGE)
+    {
+        throw std::logic_error("Invalid function for action type");
+    }
+    #endif
+
+    float roll(_get_roll() * multiplier * invoker->evasiveness);
 
     DEBUG_OUT(this->invoker->uid << " dodges");
     if ((0 <= roll) && (roll < 0.6f))
@@ -271,17 +306,43 @@ void Action::_dodge()
 
         DEBUG_OUT(" successfully\n");
     }
+    #if _DEBUG
+    else
+    {
+        /* Path should never be reached */
+        throw std::out_of_range("Invalid roll value");
+    }
+    #endif
 }
 
 void Action::_inner_peace()
 {
+    #if _DEBUG
+    if (this->type != INNERPEACE)
+    {
+        throw std::logic_error("Invalid function for action type");
+    }
+    #endif
+
     this->invokerHPOffset += (this->invoker->get_max_hp() * 0.5f);
 
     DEBUG_OUT(this->invoker->uid << " casts Inner Peace and heals itself");
     DEBUG_OUT(" for " << (this->invoker->get_max_hp() * 0.5f) << '\n');
 }
 
-void Action::process()
+void Action::_escape(float multiplier)
+{
+    float roll(_get_roll() * multiplier * invoker->evasiveness);
+
+}
+
+void Action::_catch(float multiplier)
+{
+    float roll(_get_roll() * multiplier);
+
+}
+
+void Action::process(float multiplier)
 {
     switch (this->type)
     {
@@ -295,16 +356,27 @@ void Action::process()
             _brace();
             break;
         case (DODGE):
-            _dodge();
+            _dodge(multiplier);
             break;
         case (INNERPEACE):
             _inner_peace();
+            break;
+        case (ESCAPE):
+            _escape(multiplier);
+            break;
+        case (CATCH):
+            _catch(multiplier);
             break;
     }
 }
 
 void Action::apply()
 {
+    if (this->applied)
+    {
+        throw std::logic_error("Invalid; Action already applied");
+    }
+
     float invokerHP = this->invoker->get_hp();
     float targetHP = this->target->get_hp();
 

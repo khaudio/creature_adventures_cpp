@@ -10,20 +10,24 @@ _isDraw(false),
 aggressor(nullptr),
 defender(nullptr),
 pvp(false),
-_lastAggressorAction(PASS),
-_lastDefenderAction(PASS)
+_lastAggressorAction(PASS, this->aggressor, this->defender),
+_lastDefenderAction(PASS, this->defender, this->aggressor)
 {
 }
 
-Battle::Battle(Creature* attackingCreature, Creature* defendingCreature, bool isPvp) :
+Battle::Battle(
+        Creature* attackingCreature,
+        Creature* defendingCreature,
+        bool isPvp
+    ) :
 _aggressorActive(true),
 _defenderActive(true),
 _isDraw(false),
 aggressor(attackingCreature),
 defender(defendingCreature),
 pvp(isPvp),
-_lastAggressorAction(PASS),
-_lastDefenderAction(PASS)
+_lastAggressorAction(PASS, this->aggressor, this->defender),
+_lastDefenderAction(PASS, this->defender, this->aggressor)
 {
 }
 
@@ -40,6 +44,24 @@ _lastDefenderAction(ref._lastDefenderAction)
 
 Battle::~Battle()
 {
+}
+
+void Battle::_validate_action(Action action)
+{
+    #if _DEBUG
+    if (
+            (action.invoker == nullptr)
+            || (action.target == nullptr)
+        )
+    {
+        throw std::invalid_argument("Creature is null");
+    }
+    else if (action.target->get_hp() <= 0)
+    {
+        throw std::invalid_argument("Creature hp must be > 0");
+    }
+    #endif
+
 }
 
 bool Battle::active()
@@ -84,10 +106,6 @@ Creature* Battle::result()
     }
 
     return nullptr;
-}
-
-void Battle::strike(Action action)
-{
 }
 
 void Battle::forfeit(Action action)
@@ -188,7 +206,10 @@ void Battle::process_single_action(Action action)
             strike(action);
             break;
         
-        case (M)
+        case (MEDITATE):
+            action.process();
+            action.apply();
+            break;
 
     }
 

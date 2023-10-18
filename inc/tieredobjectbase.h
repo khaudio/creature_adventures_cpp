@@ -32,12 +32,12 @@ enum ActionIndex
     MEDITATE = 1,
     BRACE = 2,
     DODGE = 3,
-    INNERPEACE = 4,
-    SWITCH = 5,
-    FORFEIT = 6,
-    ESCAPE = 7,
-    CATCH = 8,
-    PASS = 9,
+    SWITCH = 4,
+    FORFEIT = 5,
+    ESCAPE = 6,
+    CATCH = 7,
+    PASS = 8,
+    INNERPEACE = 9,
 };
 
 template <typename T>

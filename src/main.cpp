@@ -65,6 +65,10 @@ int main(int argc, char** argv)
         // {
         //     creature1 = creatureDeck.draw();
         // }
+        // while (creature2.tier != EPIC)
+        // {
+        //     creature2 = creatureDeck.draw();
+        // }
 
         DEBUG_OUT("\n\t" << std::setw(4));
         DEBUG_OUT("uid" << std::setw(15));

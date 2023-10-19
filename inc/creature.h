@@ -49,6 +49,7 @@ public:
 
     float rollMinModifier = 0;
     float rollMaxModifier = 0;
+    float evasivenessModifier = 0;
 
 public:
 

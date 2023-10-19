@@ -129,13 +129,13 @@ private:
     instead, use process() and then apply() */
 
     /* Calcualte result if action type is STRIKE */
-    void _strike();
+    void _strike(float multiplier = 1.0f);
 
     /* Calculate result if action type is MEDITATE */
-    void _meditate();
+    void _meditate(float multiplier = 1.0f);
 
     /* Calculate result if action type is BRACE */
-    void _brace();
+    void _brace(float multiplier = 1.0f);
 
     /* Calculate result if action type is DODGE */
     void _dodge(float multiplier = 1.0f);

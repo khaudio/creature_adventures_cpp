@@ -70,10 +70,16 @@ float Action::_get_roll()
         rollValueMax += modifier.rollMaxModifier;
     }
 
-    return random_multiplier_roll<float>(rollValueMin, rollValueMax);
+    float roll(random_multiplier_roll<float>(rollValueMin, rollValueMax));
+
+    #if _DEBUG
+    visualize_roll<float>(roll);
+    #endif
+
+    return roll;
 }
 
-void Action::_strike()
+void Action::_strike(float multiplier)
 {
     #if _DEBUG
     if (this->type != STRIKE)
@@ -82,14 +88,14 @@ void Action::_strike()
     }
     #endif
 
-    float roll(_get_roll());
+    float roll(_get_roll() * multiplier);
 
     if (roll < 0.12f)
     {
         /* Miss */
         this->evaded = true;
 
-        DEBUG_OUT(this->invoker->uid << " misses " << this->target->uid);
+        DEBUG_OUT(this->invoker->uid << " misses " << this->target->uid << '\n');
     }
     else if ((0.12f <= roll) && (roll < 0.2f))
     {
@@ -147,7 +153,7 @@ void Action::_strike()
     #endif
 }
 
-void Action::_meditate()
+void Action::_meditate(float multiplier)
 {
     #if _DEBUG
     if (this->type != MEDITATE)
@@ -156,7 +162,7 @@ void Action::_meditate()
     }
     #endif
 
-    float roll(_get_roll());
+    float roll(_get_roll() * multiplier);
     CreatureModifier modifier;
     modifier.numTurns = 2;
 
@@ -213,7 +219,7 @@ void Action::_meditate()
     }
 }
 
-void Action::_brace()
+void Action::_brace(float multiplier)
 {
     #if _DEBUG
     if (this->type != BRACE)
@@ -222,7 +228,7 @@ void Action::_brace()
     }
     #endif
 
-    float roll(_get_roll());
+    float roll(_get_roll() * multiplier);
     CreatureModifier modifier;
     modifier.numTurns = 2;
 
@@ -347,25 +353,25 @@ void Action::process(float multiplier)
     switch (this->type)
     {
         case (STRIKE):
-            _strike();
+            _strike(multiplier);
             break;
         case (MEDITATE):
-            _meditate();
+            _meditate(multiplier);
             break;
         case (BRACE):
-            _brace();
+            _brace(multiplier);
             break;
         case (DODGE):
             _dodge(multiplier);
-            break;
-        case (INNERPEACE):
-            _inner_peace();
             break;
         case (ESCAPE):
             _escape(multiplier);
             break;
         case (CATCH):
             _catch(multiplier);
+            break;
+        case (INNERPEACE):
+            _inner_peace();
             break;
     }
 }
@@ -377,17 +383,20 @@ void Action::apply()
         throw std::logic_error("Invalid; Action already applied");
     }
 
-    float invokerHP = this->invoker->get_hp();
-    float targetHP = this->target->get_hp();
+    if (!this->evaded)
+    {
+        float invokerHP = this->invoker->get_hp();
+        float targetHP = this->target->get_hp();
 
-    invokerHP *= this->invokerHPScaler;
-    invokerHP += this->invokerHPOffset;
+        invokerHP *= this->invokerHPScaler;
+        invokerHP += this->invokerHPOffset;
 
-    targetHP *= this->targetHPScaler;
-    targetHP += this->targetHPOffset;
+        targetHP *= this->targetHPScaler;
+        targetHP += this->targetHPOffset;
 
-    this->invoker->set_hp(invokerHP);
-    this->target->set_hp(targetHP);
+        this->invoker->set_hp(invokerHP);
+        this->target->set_hp(targetHP);
+    }
 
     this->applied = true;
 }

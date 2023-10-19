@@ -70,13 +70,7 @@ float Action::_get_roll()
         rollValueMax += modifier.rollMaxModifier;
     }
 
-    float roll(random_multiplier_roll<float>(rollValueMin, rollValueMax));
-
-    #if _DEBUG
-    visualize_roll<float>(roll);
-    #endif
-
-    return roll;
+    return random_multiplier_roll<float>(rollValueMin, rollValueMax);
 }
 
 void Action::_strike(float multiplier)
@@ -112,7 +106,7 @@ void Action::_strike(float multiplier)
         DEBUG_OUT(this->invoker->uid << " hits " << this->target->uid);
         DEBUG_OUT(" (deflected) for " << this->targetHPOffset << " HP; ");
         DEBUG_OUT(this->target->uid << " counterstrikes (deflected) for ");
-        DEBUG_OUT(this->invokerHPOffset << "HP\n");
+        DEBUG_OUT(this->invokerHPOffset << " HP\n");
     }
     else if ((0.17f <= roll) && (roll < 0.89f))
     {

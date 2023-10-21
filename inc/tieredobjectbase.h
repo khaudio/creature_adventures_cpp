@@ -38,6 +38,7 @@ enum ActionIndex
     CATCH = 7,
     PASS = 8,
     INNERPEACE = 9,
+    USEITEM = 10,
 };
 
 template <typename T>

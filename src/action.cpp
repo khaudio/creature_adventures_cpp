@@ -6,11 +6,13 @@ namespace CreatureAdventures
 Action::Action(
         ActionIndex actionTypeIndex,
         Creature* invokingCreature,
-        Creature* targetedCreature
+        Creature* targetedCreature,
+        Item* itemToUse
     ) :
 type(actionTypeIndex),
 invoker(invokingCreature),
-target(targetedCreature)
+target(targetedCreature),
+_item(itemToUse)
 {
     #if _DEBUG
     _validate_type();
@@ -19,8 +21,8 @@ target(targetedCreature)
 
 Action::Action(const Action& ref) :
 type(ref.type),
-invokerHPScaler(ref.invokerHPScaler),
-targetHPScaler(ref.targetHPScaler),
+invokerHPScale(ref.invokerHPScale),
+targetHPScale(ref.targetHPScale),
 invokerHPOffset(ref.invokerHPOffset),
 targetHPOffset(ref.targetHPOffset),
 evasive(ref.evasive),
@@ -48,6 +50,13 @@ void Action::_validate_type()
     {
         throw std::out_of_range("Action type index not found");
     }
+    if (
+                (this->type == USEITEM)
+                && (this->_item == nullptr)
+            )
+    {
+        throw std::invalid_argument("No item assigned");
+    }
 }
 
 const char* Action::name() const
@@ -64,11 +73,11 @@ float Action::_get_roll()
 {
     float rollValueMin(0.0), rollValueMax(1.0);
 
-    for (const auto& modifier: invoker->modifiers)
-    {
-        rollValueMin += modifier.rollMinModifier;
-        rollValueMax += modifier.rollMaxModifier;
-    }
+    // for (const auto& modifier: invoker->modifiers)
+    // {
+    //     rollValueMin += modifier.rollMinModifier;
+    //     rollValueMax += modifier.rollMaxModifier;
+    // }
 
     return random_multiplier_roll<float>(rollValueMin, rollValueMax);
 }
@@ -169,10 +178,7 @@ void Action::_meditate(float multiplier)
     else if ((0.1f <= roll) && (roll < 0.6f))
     {
         /* +30% attack */
-        modifier.attackModifier = (std::round(
-                this->invoker->_get_persistent_attack()
-                * 0.3f
-            ));
+        modifier.attackScale = 1.3f;
 
         DEBUG_OUT(" for +30% persistent attack power");
         DEBUG_OUT(" (" << this->invoker->get_attack() << ")\n");
@@ -180,10 +186,7 @@ void Action::_meditate(float multiplier)
     else if ((0.6f <= roll) && (roll < 0.92f))
     {
         /* +50% attack */
-        modifier.attackModifier = (std::round(
-                this->invoker->_get_persistent_attack()
-                * 0.5f
-            ));
+        modifier.attackScale = 1.5f;
 
         DEBUG_OUT(" for +50% persistent attack power");
         DEBUG_OUT(" (" << this->invoker->get_attack() << ")\n");
@@ -191,10 +194,7 @@ void Action::_meditate(float multiplier)
     else if (0.92f <= roll)
     {
         /* +100% attack */
-        modifier.attackModifier = (std::round(
-                this->invoker->_get_persistent_attack()
-                * 1.0f
-            ));
+        modifier.attackScale = 2.0f;
 
         DEBUG_OUT(" for +100% persistent attack power");
         DEBUG_OUT(" (" << this->invoker->get_attack() << ")\n");
@@ -207,7 +207,7 @@ void Action::_meditate(float multiplier)
     }
     #endif
 
-    if (modifier.attackModifier)
+    if (modifier.attackScale != 1.0f)
     {
         this->invoker->add_modifier(modifier);
     }
@@ -235,10 +235,7 @@ void Action::_brace(float multiplier)
     else if ((0.1f <= roll) && (roll < 0.6f))
     {
         /* +50% defense */
-        modifier.defenseModifier = (std::round(
-                this->invoker->_get_persistent_defense()
-                * 0.5f
-            ));
+        modifier.defenseScale = 1.5f;
 
         DEBUG_OUT(" for +50% persistent defense");
         DEBUG_OUT(" (" << this->invoker->get_defense() << ")\n");
@@ -246,10 +243,7 @@ void Action::_brace(float multiplier)
     else if ((0.6f <= roll) && (roll < 0.92f))
     {
         /* +100% defense */
-        modifier.defenseModifier = (std::round(
-                this->invoker->_get_persistent_defense()
-                * 1.0f
-            ));
+        modifier.defenseScale = 2.0f;
 
         DEBUG_OUT(" for +100% persistent defense");
         DEBUG_OUT(" (" << this->invoker->get_defense() << ")\n");
@@ -257,10 +251,7 @@ void Action::_brace(float multiplier)
     else if (0.92f <= roll)
     {
         /* +200% defense */
-        modifier.defenseModifier = (std::round(
-                this->invoker->_get_persistent_defense()
-                * 2.0f
-            ));
+        modifier.defenseScale = 3.0f;
 
         DEBUG_OUT(" for +200% persistent defense");
         DEBUG_OUT(" (" << this->invoker->get_defense() << ")\n");
@@ -273,7 +264,7 @@ void Action::_brace(float multiplier)
     }
     #endif
 
-    if (modifier.defenseModifier)
+    if (modifier.defenseScale != 1.0f)
     {
         this->invoker->add_modifier(modifier);
     }
@@ -289,7 +280,7 @@ void Action::_dodge(float multiplier)
     }
     #endif
 
-    float roll(_get_roll() * multiplier * invoker->evasiveness);
+    float roll(_get_roll() * multiplier * invoker->get_evasiveness());
 
     DEBUG_OUT(this->invoker->uid << " dodges");
     if ((0 <= roll) && (roll < 0.6f))
@@ -315,6 +306,26 @@ void Action::_dodge(float multiplier)
     #endif
 }
 
+void Action::_escape(float multiplier)
+{
+    float roll(_get_roll() * multiplier * invoker->get_evasiveness());
+
+}
+
+void Action::_catch(float multiplier)
+{
+    float roll(_get_roll() * multiplier);
+
+
+}
+
+void Action::_pass()
+{
+    #if _DEBUG
+    DEBUG_OUT(this->invoker->uid << " passes\n");
+    #endif
+}
+
 void Action::_inner_peace()
 {
     #if _DEBUG
@@ -328,18 +339,6 @@ void Action::_inner_peace()
 
     DEBUG_OUT(this->invoker->uid << " casts Inner Peace and heals itself");
     DEBUG_OUT(" for " << (this->invoker->get_max_hp() * 0.5f) << '\n');
-}
-
-void Action::_escape(float multiplier)
-{
-    float roll(_get_roll() * multiplier * invoker->evasiveness);
-
-}
-
-void Action::_catch(float multiplier)
-{
-    float roll(_get_roll() * multiplier);
-
 }
 
 void Action::process(float multiplier)
@@ -364,35 +363,75 @@ void Action::process(float multiplier)
         case (CATCH):
             _catch(multiplier);
             break;
+        case (PASS):
+            _pass();
+            break;
         case (INNERPEACE):
             _inner_peace();
             break;
+        // case (USEITEM):
+        //     _use_item();
+        //     break;
     }
 }
 
-void Action::apply()
+void Action::apply_scale()
 {
-    if (this->applied)
+    if (this->_appliedScale)
     {
-        throw std::logic_error("Invalid; Action already applied");
+        throw std::logic_error("Invalid; Action scale already applied");
     }
 
     if (!this->evaded)
     {
-        float invokerHP = this->invoker->get_hp();
-        float targetHP = this->target->get_hp();
-
-        invokerHP *= this->invokerHPScaler;
-        invokerHP += this->invokerHPOffset;
-
-        targetHP *= this->targetHPScaler;
-        targetHP += this->targetHPOffset;
-
-        this->invoker->set_hp(invokerHP);
-        this->target->set_hp(targetHP);
+        this->invoker->set_hp(this->invoker->get_hp() * this->invokerHPScale);
+        this->target->set_hp(this->target->get_hp() * this->targetHPScale);
     }
 
-    this->applied = true;
+    this->_appliedScale = true;
 }
+
+void Action::apply_offset()
+{
+    if (this->_appliedOffset)
+    {
+        throw std::logic_error("Invalid; Action scale already applied");
+    }
+
+    if (!this->evaded)
+    {
+        this->invoker->set_hp(this->invoker->get_hp() + this->invokerHPOffset);
+        this->target->set_hp(this->target->get_hp() + this->targetHPOffset);
+    }
+
+    this->_appliedOffset = true;
+}
+
+
+// void PlayerAction::_use_item()
+// {
+//     switch (this->_item->type)
+//     {
+//         case (POTION):
+//             this->targetHPOffset += this->_item->value;
+//             break;
+//         case (POISON):
+//             this->targetHPOffset += this->_item->value;
+//             break;
+//         case (ELIXIR):
+            
+//             break;
+//         case (REVIVE):
+//             this->targetHPOffset += this->target->get_max_hp();
+//             break;
+//         case (BAIT):
+//             break;
+//     }
+// }
+
+// void PlayerAction::apply()
+// {
+
+// }
 
 };

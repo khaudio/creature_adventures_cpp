@@ -3,9 +3,8 @@
 namespace CreatureAdventures
 {
 
-PlayerBase::PlayerBase(int playerUidNum) :
-_human(false),
-_activeCreature(nullptr),
+Player::Player(int playerUidNum, bool isHuman) :
+_human(isHuman),
 uid(playerUidNum)
 {
     std::copy(
@@ -16,7 +15,7 @@ uid(playerUidNum)
     this->creatures.reserve(3);
 }
 
-PlayerBase::PlayerBase(const PlayerBase& ref) :
+Player::Player(const Player& ref) :
 _human(ref._human),
 _activeCreature(ref._activeCreature),
 _availableActions(ref._availableActions),
@@ -30,42 +29,16 @@ items(ref.items)
 {
 }
 
-PlayerBase::~PlayerBase()
+Player::~Player()
 {
 }
 
-Creature* PlayerBase::get_active_creature() const
+bool Player::is_human() const
 {
-    return this->_activeCreature;
+    return this->_human;
 }
 
-void PlayerBase::set_active_creature(Creature* creature)
-{
-    for (Creature* c: this->creatures)
-    {
-        if (c == creature)
-        {
-            this->_activeCreature = c;
-            return;
-        }
-    }
-    throw std::out_of_range("Creature not found");
-}
-
-void PlayerBase::set_active_creature(int uidNum)
-{
-    for (Creature* c: this->creatures)
-    {
-        if (c->uid == uidNum)
-        {
-            this->_activeCreature = c;
-            return;
-        }
-    }
-    throw std::out_of_range("Creature not found");
-}
-
-bool PlayerBase::has_artifact(ArtifactIndex index) const
+bool Player::has_artifact(ArtifactIndex index) const
 {
     auto iter = std::find(
             this->_artifacts.begin(),
@@ -75,52 +48,40 @@ bool PlayerBase::has_artifact(ArtifactIndex index) const
     return !(iter == this->_artifacts.end());
 }
 
-void PlayerBase::level_up()
+void Player::set_active_creature(Creature* creature)
+{
+    for (Creature& c: this->creatures)
+    {
+        if (c == *creature)
+        {
+            this->_activeCreature = &c;
+            return;
+        }
+    }
+    throw std::out_of_range("Creature not found");
+}
+
+void Player::set_active_creature(int uidNum)
+{
+    for (Creature& c: this->creatures)
+    {
+        if (c.uid == uidNum)
+        {
+            this->_activeCreature = &c;
+            return;
+        }
+    }
+    throw std::out_of_range("Creature not found");
+}
+
+Creature* Player::get_active_creature() const
+{
+    return this->_activeCreature;
+}
+
+void Player::level_up()
 {
     this->assignableAttributePoints += this->level;
-}
-
-Player::Player(int uidNum, std::string playerName) :
-PlayerBase(uidNum)
-{
-    this->_human = true;
-    this->name = playerName;
-}
-
-Player::Player(const Player& ref) :
-PlayerBase(ref),
-_catchChance(ref._catchChance)
-{
-}
-
-Warlord::Warlord(int uidNum) :
-PlayerBase(uidNum)
-{
-    this->_human = false;
-}
-
-Warlord::Warlord(const Warlord& ref) :
-PlayerBase(ref)
-{
-}
-
-Warlord::~Warlord()
-{
-}
-
-Gladiator::Gladiator(int uidNum) :
-PlayerBase(uidNum)
-{
-    this->_human = false;
-}
-
-Gladiator::Gladiator(const Gladiator& ref) :
-PlayerBase(ref)
-{
-}
-
-Gladiator::~Gladiator()
-{
 }
 
 };

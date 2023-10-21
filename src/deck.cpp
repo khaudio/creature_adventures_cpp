@@ -127,6 +127,9 @@ Creature DeckBuilder::_create_creature(
     /* Give remaining points to defense */
     newCreature.baseDefense = std::round(remainingStatPoints);
 
+    /* Evasiveness */
+    newCreature.baseEvasiveness = 0.05f;
+
     return newCreature;
 }
 

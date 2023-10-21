@@ -1,9 +1,10 @@
 #ifndef CREATUREADVENTURES_ACTION_H
 #define CREATUREADVENTURES_ACTION_H
 
-#include "tieredobjectbase.h"
 #include "dice.h"
 #include "creature.h"
+#include "item.h"
+#include "player.h"
 
 #include <memory>
 
@@ -12,6 +13,7 @@ namespace CreatureAdventures
 
 /* Declarations */
 class Action;
+class ActionPair;
 
 /* Actions are taken by creatures to cause
 damage or healing during battles.
@@ -22,7 +24,7 @@ class Action
 
 public:
 
-    static constexpr const int numTypes = 10;
+    static constexpr const int numTypes = 11;
 
     static constexpr const std::array<ActionIndex, Action::numTypes> types = {
             STRIKE,
@@ -35,6 +37,7 @@ public:
             CATCH,
             PASS,
             INNERPEACE,
+            USEITEM,
         };
 
     static constexpr const std::array<const char*, Action::numTypes> names = {
@@ -47,7 +50,8 @@ public:
             "Escape",
             "Catch",
             "Pass",
-            "InnerPeace",
+            "Inner Peace",
+            "Use Item"
         };
 
     static constexpr const std::array<const char*, Action::numTypes> descriptions = {
@@ -61,7 +65,15 @@ public:
             "Attempt to catch a wild creature",
             "Forego action",
             "Heal for half max HP",
+            "Use an item",
         };
+
+protected:
+
+    Item* _item = nullptr;
+
+    bool _appliedScale = false;
+    bool _appliedOffset = false;
 
 public:
 
@@ -69,8 +81,8 @@ public:
     ActionIndex type;
 
     /* Values to scale HP by */
-    float invokerHPScaler = 1.0f;
-    float targetHPScaler = 1.0f;
+    float invokerHPScale = 1.0f;
+    float targetHPScale = 1.0f;
 
     /* Absolute HP offset;
     Can be a positive or negative float value.
@@ -87,17 +99,19 @@ public:
     or whether target evaded */
     bool evaded = false;
 
-    Creature* invoker;
-    Creature* target;
+    Creature* invoker = nullptr;
+    Creature* target = nullptr;
 
-    bool applied = false;
+    CreatureModifier* invokerModifier = nullptr;
+    CreatureModifier* targetModifier = nullptr;
 
 public:
 
     Action(
             ActionIndex actionTypeIndex,
             Creature* invokingCreature,
-            Creature* targetedCreature
+            Creature* targetedCreature,
+            Item* itemToUse = nullptr
         );
     Action(const Action& ref);
 
@@ -126,7 +140,8 @@ private:
     /* Run action
 
     These should not be called directly;
-    instead, use process() and then apply() */
+    instead, use process() and then
+    apply_scale() followed by apply_offset() */
 
     /* Calcualte result if action type is STRIKE */
     void _strike(float multiplier = 1.0f);
@@ -146,8 +161,14 @@ private:
     /* Roll for catch chance */
     void _catch(float multiplier = 1.0f);
 
+    /* Do nothing */
+    void _pass();
+
     /* Calculate result if action type is INNERPEACE */
     void _inner_peace();
+
+    // /* Use item on target */
+    // void _use_item();
 
 public:
 
@@ -155,7 +176,29 @@ public:
     void process(float multiplier = 1.0f);
 
     /* Apply result to Creatures */
-    void apply();
+    
+    /* Scale values from all simultaneous
+    actions first so that subsequent applications
+    are not stacked */
+    void apply_scale();
+
+    /* Apply offsets */
+    void apply_offset();
+};
+
+class ActionPair
+{
+
+public:
+
+    ActionPair();
+    ActionPair(const ActionPair& ref);
+
+    ~ActionPair();
+
+public:
+
+    void process();
 
 };
 

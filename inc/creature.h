@@ -2,36 +2,15 @@
 #define CREATUREADVENTURES_CREATURE_H
 
 #include "tieredobjectbase.h"
+#include "modifier.h"
 
 namespace CreatureAdventures
 {
 
 /* Declarations */
-class ModifierBase;
+
 class CreatureModifier;
 class Creature;
-
-class ModifierBase
-{
-protected:
-
-    static inline int uidIndex = 0;
-
-public:
-
-    int uid;
-    int numTurns;
-    bool timed;
-    bool activeDuringCombat;
-
-public:
-
-    ModifierBase();
-    ModifierBase(const ModifierBase& ref);
-
-    ~ModifierBase();
-
-};
 
 /* Modifiers to creature attributes.
 Can optionally expire after
@@ -43,13 +22,19 @@ class CreatureModifier : public ModifierBase
 
 public:
 
-    float attackModifier;
-    float defenseModifier;
-    float hpModifier;
+    float attackScale = 1.0f;
+    float defenseScale = 1.0f;
+    float hpScale = 1.0f;
+    float evasivenessScale = 1.0f;
 
-    float rollMinModifier = 0;
-    float rollMaxModifier = 0;
-    float evasivenessModifier = 0;
+    float attackOffset = 0;
+    float defenseOffset = 0;
+    float hpOffset = 0;
+    float evasivenessOffset = 0;
+
+    float rollMinOffset = 0;
+    float rollMaxOffset = 0;
+
 
 public:
 
@@ -58,7 +43,10 @@ public:
 
     ~CreatureModifier();
 
-    friend bool operator==(const CreatureModifier& left, const CreatureModifier& right)
+    friend bool operator==(
+            const CreatureModifier& left,
+            const CreatureModifier& right
+        )
     {
         return (left.uid == right.uid);
     }
@@ -70,21 +58,24 @@ class Creature : public TieredObjectBase
 
 public:
 
+    /* Base values should not be altered */
     float baseAttack;
     float baseDefense;
     float baseMaxHP;
+
+    /* Multiplier for effectiveness of evasion;
+    i.e., 1.0 is normal evasiveness */
+    float baseEvasiveness;
 
     std::string owner;
     std::string baseName;
     std::string nickname;
 
+    /* Persistent modifiers; always >= 0 */
     float attackModifier = 0;
     float defenseModifier = 0;
     float hpModifier = 0;
-
-    /* Multiplier for effectiveness of evasion;
-    i.e., 1.0 is normal evasiveness */
-    float evasiveness = 1.0f;
+    float evasivenessModifier = 0;
 
 protected:
 
@@ -92,18 +83,8 @@ protected:
 
 public:
 
+    /* Temporary modifiers */
     std::vector<CreatureModifier> modifiers;
-    std::vector<ActionIndex> availableActionIndeces = {
-            STRIKE,
-            MEDITATE,
-            BRACE,
-            DODGE,
-            SWITCH,
-            FORFEIT,
-            ESCAPE,
-            CATCH,
-            PASS,
-        };
 
 public:
 
@@ -129,13 +110,23 @@ public:
     /* Persistent defense plus all modifiers */
     float get_defense() const;
 
+    /* Persistent maximum hp plus all modifiers */
+    void _set_persistent_max_hp(float value);
+    float _get_persistent_max_hp() const;
+
     /* Maximum possible HP */
-    void set_max_hp(float value);
     float get_max_hp() const;
 
     /* Current HP */
     void set_hp(float value);
     float get_hp() const;
+
+    /* Base evasiveness plus object modifier value */
+    void _set_persistent_evasiveness(float value);
+    float _get_persistent_evasiveness() const;
+
+    /* Persistent evasiveness plus all modifiers */
+    float get_evasiveness() const;
 
     /* Creature name */
     void set_name(std::string nameStr);
@@ -143,6 +134,8 @@ public:
 
     void add_modifier(const CreatureModifier& modifier);
     void remove_modifier(const CreatureModifier& modifier);
+
+    void decrement_modifiers();
 
     void heal(float value);
 

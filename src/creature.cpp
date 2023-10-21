@@ -3,43 +3,23 @@
 namespace CreatureAdventures
 {
 
-ModifierBase::ModifierBase() :
-uid(ModifierBase::uidIndex++),
-numTurns(0),
-timed(false),
-activeDuringCombat(false)
-{
-}
-
-ModifierBase::ModifierBase(const ModifierBase& ref) :
-uid(ref.uid),
-numTurns(ref.numTurns),
-timed(ref.timed),
-activeDuringCombat(ref.activeDuringCombat)
-{
-}
-
-ModifierBase::~ModifierBase()
-{
-}
-
 CreatureModifier::CreatureModifier() :
-ModifierBase(),
-attackModifier(0),
-defenseModifier(0),
-hpModifier(0),
-rollMinModifier(0),
-rollMaxModifier(0)
+ModifierBase()
 {
 }
 
 CreatureModifier::CreatureModifier(const CreatureModifier& ref) :
 ModifierBase(ref),
-attackModifier(ref.attackModifier),
-defenseModifier(ref.defenseModifier),
-hpModifier(ref.hpModifier),
-rollMinModifier(ref.rollMinModifier),
-rollMaxModifier(ref.rollMaxModifier)
+attackScale(ref.attackScale),
+defenseScale(ref.defenseScale),
+hpScale(ref.hpScale),
+evasivenessScale(ref.evasivenessScale),
+attackOffset(ref.attackOffset),
+defenseOffset(ref.defenseOffset),
+hpOffset(ref.hpOffset),
+evasivenessOffset(ref.evasivenessOffset),
+rollMinOffset(ref.rollMinOffset),
+rollMaxOffset(ref.rollMaxOffset)
 {
 }
 
@@ -64,15 +44,16 @@ TieredObjectBase(ref),
 baseAttack(ref.baseAttack),
 baseDefense(ref.baseDefense),
 baseMaxHP(ref.baseMaxHP),
+baseEvasiveness(ref.baseEvasiveness),
 owner(ref.owner),
 baseName(ref.baseName),
 nickname(ref.nickname),
 attackModifier(ref.attackModifier),
 defenseModifier(ref.defenseModifier),
 hpModifier(ref.hpModifier),
+evasivenessModifier(ref.evasivenessModifier),
 _currentHP(ref._currentHP),
-modifiers(std::vector<CreatureModifier>(ref.modifiers)),
-availableActionIndeces(std::vector<ActionIndex>(ref.availableActionIndeces))
+modifiers(std::vector<CreatureModifier>(ref.modifiers))
 {
 }
 
@@ -88,6 +69,13 @@ std::string Creature::get_owner() const
 
 void Creature::_set_persistent_attack(float value)
 {
+    #if _DEBUG
+    if (value < 0)
+    {
+        throw std::invalid_argument("Attack must be >= 0");
+    }
+    #endif
+
     this->attackModifier = value - this->baseAttack;
 
     /* Minimum attack 0 */
@@ -96,86 +84,110 @@ void Creature::_set_persistent_attack(float value)
 
 float Creature::_get_persistent_attack() const
 {
-    float sum(this->baseAttack + this->attackModifier);
-
-    /* Minimum attack 0 */
-    trim_minimum<float>(&sum, 0);
-
-    return sum;
+    return (this->baseAttack + this->attackModifier);
 }
 
 float Creature::get_attack() const
 {
-    float sum(0.0);
+    float scale(1.0);
+    float offset(0.0);
+    float value(_get_persistent_attack());
 
     for (const auto& mod: this->modifiers)
     {
-        sum += mod.attackModifier;
+        scale += (1.0f - mod.attackScale);
+        offset += mod.attackOffset;
     }
-    sum += (this->baseAttack + this->attackModifier);
+
+    value *= scale;
+    value += offset;
 
     /* Minimum attack 0 */
-    trim_minimum<float>(&sum, 0);
+    trim_minimum<float>(&value, 0);
 
-    return sum;
+    return std::round(value);
 }
 
 void Creature::_set_persistent_defense(float value)
 {
+    #if _DEBUG
+    if (value < 0)
+    {
+        throw std::invalid_argument("Defense must be >= 0");
+    }
+    #endif
+
     this->defenseModifier = value - this->baseDefense;
 
-    /* Minimum HP 1 */
-    trim_minimum(&this->defenseModifier, (-(this->baseDefense - 1)));
+    /* Minimum defense 0 */
+    trim_minimum<float>(&this->defenseModifier, 0);
 }
 
 float Creature::_get_persistent_defense() const
 {
-    float sum(this->baseDefense + this->defenseModifier);
-
-    /* Minimum HP 1 */
-    trim_minimum<float>(&sum, (-(this->baseDefense - 1)));
-
-    return sum;
+    return (this->baseDefense + this->defenseModifier);
 }
 
 float Creature::get_defense() const
 {
-    float sum(0.0);
+    float scale(1.0);
+    float offset(0.0);
+    float value(_get_persistent_defense());
 
     for (const auto& mod: this->modifiers)
     {
-        sum += mod.defenseModifier;
+        scale += (1.0f - mod.defenseScale);
+        offset += mod.defenseOffset;
     }
-    sum += (this->baseDefense + this->defenseModifier);
 
-    /* Minimum HP 1 */
-    trim_minimum<float>(&sum, 1);
+    value *= scale;
+    value += offset;
 
-    return sum;
+    /* Minimum defense 0 */
+    trim_minimum<float>(&value, 0);
+
+    return std::round(value);
 }
 
-void Creature::set_max_hp(float value)
+void Creature::_set_persistent_max_hp(float value)
 {
+    #if _DEBUG
+    if (value <= 0)
+    {
+        throw std::invalid_argument("Max HP must be > 0");
+    }
+    #endif
+
     this->hpModifier = value - this->baseMaxHP;
 
     /* Minimum HP 1 */
     trim_minimum<float>(&this->hpModifier, 1);
 }
 
+float Creature::_get_persistent_max_hp() const
+{
+    return (this->baseMaxHP + this->hpModifier);
+}
+
 float Creature::get_max_hp() const
 {
-    float sum(0.0);
+    float scale(1.0);
+    float offset(0.0);
+    float value(_get_persistent_max_hp());
 
     for (const auto& mod: this->modifiers)
     {
-        sum += mod.hpModifier;
+        scale += (1.0f - mod.hpScale);
+        offset += mod.hpOffset;
     }
-    sum += (this->baseMaxHP + this->hpModifier);
+
+    value *= scale;
+    value += offset;
 
     /* Minimum HP 1 */
-    trim_minimum<float>(&sum, 1);
+    trim_minimum<float>(&value, 1);
 
-    return sum;
+    return std::round(value);
 }
 
 void Creature::set_hp(float value)
@@ -197,7 +209,47 @@ void Creature::set_hp(float value)
 
 float Creature::get_hp() const
 {
-    return this->_currentHP;
+    return std::round(this->_currentHP);
+}
+
+void Creature::_set_persistent_evasiveness(float value)
+{
+    #if _DEBUG
+    if (value < 0)
+    {
+        throw std::invalid_argument("Evasiveness must be >= 0");
+    }
+    #endif
+
+    this->evasivenessModifier = value - this->baseEvasiveness;
+
+    /* Minimum evasiveness 0 */
+    trim_minimum<float>(&this->evasivenessModifier, 0);
+}
+
+float Creature::_get_persistent_evasiveness() const
+{
+    return (this->baseEvasiveness + this->evasivenessModifier);
+}
+
+float Creature::get_evasiveness() const
+{
+    float value(_get_persistent_evasiveness());
+    float scale(1.0);
+    float offset(0.0);
+
+    for (const auto& modifier: this->modifiers)
+    {
+        scale += (1.0f - modifier.evasivenessScale);
+        offset += modifier.evasivenessOffset;
+    }
+
+    value *= scale;
+    value += offset;
+
+    trim_minimum<float>(&value, 0);
+
+    return value;
 }
 
 void Creature::set_name(std::string nameStr)
@@ -223,6 +275,17 @@ void Creature::remove_modifier(const CreatureModifier& modifier)
         {
             this->modifiers.erase(it);
             return;
+        }
+    }
+}
+
+void Creature::decrement_modifiers()
+{
+    for (CreatureModifier modifier: this->modifiers)
+    {
+        if (--modifier.numTurns <= 0)
+        {
+            remove_modifier(modifier);
         }
     }
 }

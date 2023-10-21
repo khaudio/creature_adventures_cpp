@@ -1,12 +1,26 @@
 # TODO
 
+- deck
+    - distribute points to items per tier (currently all at max)
+    - add baseEvasiveness to creature creation
+
 - creature
-    - trim attribute minimums so there are not negative attack values, etc
+    - change member variables from "modifier" to "scaler" or "offset"
+    - add scaler on getters
 
 - action
+    - change Action to CombatAction
+    - add NonCombatAction and have INNERPEACE in both
+        - or have Action base class that has INNERPEACE in it's types
+        - both inherit from base
+    - add evade chance to every roll
+        - based on target->get_evasiveness()
+        - maybe change strike thresholds to subtract some fraction of evasiveness
+    - remove scale/offsets if needed once implemented in creature
+    - add players for catch chance, etc
+        - maybe subclass it
+    - implement catch, escape, rest of items
     - trim action deltas when applied
 
 - json state save
-- player
-- battle
-- core class
+- core class for decks

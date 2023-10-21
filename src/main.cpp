@@ -45,6 +45,21 @@ void print_item_stats(const Item& item)
     DEBUG_OUT((item.persistent ? " is" : " is not") << " persistent\n");
 }
 
+void print_creature_pair(const Creature& creature1, const Creature& creature2)
+{
+    DEBUG_OUT('\n');
+
+    DEBUG_OUT(std::setw(4) << "\tuid " << std::setw(3) << creature1.uid);
+    DEBUG_OUT(std::setw(12) << Creature::tierNames[creature1.tier]);
+    visualize_creature_hp(creature1);
+
+    DEBUG_OUT(std::setw(4) << "\tuid " << std::setw(3) << creature2.uid);
+    DEBUG_OUT(std::setw(12) << Creature::tierNames[creature2.tier]);
+    visualize_creature_hp(creature2);
+
+    DEBUG_OUT("\n\n");
+}
+
 int main(int argc, char** argv)
 {
     while (true)
@@ -60,7 +75,7 @@ int main(int argc, char** argv)
         Creature creature1(creatureDeck.draw());
         Creature creature2(creatureDeck.draw());
 
-        /* Force epic creature vs random creature */
+        /* Force epic creatures */
         // while (creature1.tier != EPIC)
         // {
         //     creature1 = creatureDeck.draw();
@@ -90,24 +105,23 @@ int main(int argc, char** argv)
 
             Action action1(STRIKE, &creature1, &creature2);
             Action action2(STRIKE, &creature2, &creature1);
-            
+
             action1.process();
             action2.process();
 
             action1.evaded = action2.evasive;
             action2.evasive = action1.evaded;
 
-            action1.apply();
-            action2.apply();
-            
-            DEBUG_OUT('\n');
-            DEBUG_OUT(std::setw(4) << "\tuid " << std::setw(3) << creature1.uid);
-            DEBUG_OUT(std::setw(12) << Creature::tierNames[creature1.tier]);
-            visualize_creature_hp(creature1);
-            DEBUG_OUT(std::setw(4) << "\tuid " << std::setw(3) << creature2.uid);
-            DEBUG_OUT(std::setw(12) << Creature::tierNames[creature2.tier]);
-            visualize_creature_hp(creature2);
-            DEBUG_OUT("\n\n");
+            action1.apply_scale();
+            action2.apply_scale();
+
+            action1.apply_offset();
+            action2.apply_offset();
+
+            creature1.decrement_modifiers();
+            creature2.decrement_modifiers();
+
+            print_creature_pair(creature1, creature2);
         }
 
         if (!creature1.get_hp() && !creature2.get_hp())
@@ -124,11 +138,7 @@ int main(int argc, char** argv)
         DEBUG_OUT("\nPress enter to close or r to replay...\n");
         replay = getch();
 
-        if (replay == 'r')
-        {
-            continue;
-        }
-        else
+        if (replay != 'r')
         {
             break;
         }

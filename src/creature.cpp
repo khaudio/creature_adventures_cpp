@@ -21,7 +21,6 @@ evasivenessOffset(ref.evasivenessOffset),
 rollMinOffset(ref.rollMinOffset),
 rollMaxOffset(ref.rollMaxOffset)
 {
-    this->uid = CreatureModifier::uidIndex++;
 }
 
 CreatureModifier::~CreatureModifier()

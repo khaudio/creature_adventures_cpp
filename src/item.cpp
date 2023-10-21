@@ -4,13 +4,12 @@ namespace CreatureAdventures
 {
 
 Item::Item(
-        int uidNum,
         TierIndex tierNum,
         ItemIndex itemTypeIndex,
         float maxPossibleValue,
         bool isPersistent
     ) :
-TieredObjectBase(uidNum, tierNum),
+TieredObjectBase(Item::uidIndex++, tierNum),
 type(itemTypeIndex),
 persistent(isPersistent)
 {

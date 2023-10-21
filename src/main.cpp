@@ -51,11 +51,11 @@ void print_creature_pair(const Creature& creature1, const Creature& creature2)
 
     DEBUG_OUT(std::setw(4) << "\tuid " << std::setw(3) << creature1.uid);
     DEBUG_OUT(std::setw(12) << Creature::tierNames[creature1.tier]);
-    visualize_creature_hp(creature1);
+    visualize_creature_hp(creature1, 40);
 
     DEBUG_OUT(std::setw(4) << "\tuid " << std::setw(3) << creature2.uid);
     DEBUG_OUT(std::setw(12) << Creature::tierNames[creature2.tier]);
-    visualize_creature_hp(creature2);
+    visualize_creature_hp(creature2, 40);
 
     DEBUG_OUT("\n\n");
 }
@@ -76,10 +76,10 @@ int main(int argc, char** argv)
         Creature creature2(creatureDeck.draw());
 
         /* Force epic creatures */
-        // while (creature1.tier != EPIC)
-        // {
-        //     creature1 = creatureDeck.draw();
-        // }
+        while (creature1.tier != EPIC)
+        {
+            creature1 = creatureDeck.draw();
+        }
         // while (creature2.tier != EPIC)
         // {
         //     creature2 = creatureDeck.draw();
@@ -103,11 +103,11 @@ int main(int argc, char** argv)
             DEBUG_OUT("\nPress enter to continue...\n\n");
             x = getch();
 
-            Action action1(STRIKE, &creature1, &creature2);
-            Action action2(STRIKE, &creature2, &creature1);
+            CombatAction action1(STRIKE, &creature1, &creature2);
+            CombatAction action2(STRIKE, &creature2, &creature1);
 
-            action1.process();
-            action2.process();
+            action1.process(random_multiplier_roll<float>(0, 1));
+            action2.process(random_multiplier_roll<float>(0, 1));
 
             action1.evaded = action2.evasive;
             action2.evasive = action1.evaded;

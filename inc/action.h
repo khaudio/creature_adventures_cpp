@@ -12,65 +12,85 @@ namespace CreatureAdventures
 {
 
 /* Declarations */
-class Action;
+class CombatAction;
+class NonCombatAction;
 class ActionPair;
 
 /* Actions are taken by creatures to cause
 damage or healing during battles.
 Some actions may be used outside of battle */
 
-class Action
+class NonCombatAction
 {
 
 public:
 
-    static constexpr const int numTypes = 11;
+    static constexpr const int numTypes = 6;
 
-    static constexpr const std::array<ActionIndex, Action::numTypes> types = {
-            STRIKE,
-            MEDITATE,
-            BRACE,
-            DODGE,
+    static constexpr const std::array<ActionIndex, NonCombatAction::numTypes> types = {
             SWITCH,
             FORFEIT,
             ESCAPE,
             CATCH,
-            PASS,
             INNERPEACE,
             USEITEM,
         };
 
-    static constexpr const std::array<const char*, Action::numTypes> names = {
-            "Strike",
-            "Meditate",
-            "Brace",
-            "Dodge",
+    static constexpr const std::array<const char*, NonCombatAction::numTypes> names = {
             "Switch",
             "Forfeit",
             "Escape",
             "Catch",
-            "Pass",
             "Inner Peace",
-            "Use Item"
+            "Use Item",
         };
 
-    static constexpr const std::array<const char*, Action::numTypes> descriptions = {
-            "Attack an enemy for damage",
-            "Chance to increase attack",
-            "Chance to increase defense",
-            "Chance to evade incoming attack",
+    static constexpr const std::array<const char*, NonCombatAction::numTypes> descriptions = {
             "Switch to another creature",
             "Concede defeat and end the battle",
             "Run from battle",
             "Attempt to catch a wild creature",
-            "Forego action",
             "Heal for half max HP",
             "Use an item",
         };
 
-protected:
+};
 
-    Item* _item = nullptr;
+class CombatAction
+{
+
+public:
+
+    static constexpr const int numTypes = 6;
+
+    static constexpr const std::array<ActionIndex, CombatAction::numTypes> types = {
+            STRIKE,
+            MEDITATE,
+            BRACE,
+            DODGE,
+            PASS,
+            INNERPEACE,
+        };
+
+    static constexpr const std::array<const char*, CombatAction::numTypes> names = {
+            "Strike",
+            "Meditate",
+            "Brace",
+            "Dodge",
+            "Pass",
+            "Inner Peace",
+        };
+
+    static constexpr const std::array<const char*, CombatAction::numTypes> descriptions = {
+            "Attack an enemy for damage",
+            "Chance to increase attack",
+            "Chance to increase defense",
+            "Chance to evade incoming attack",
+            "Forego action",
+            "Heal for half max HP",
+        };
+
+protected:
 
     bool _appliedScale = false;
     bool _appliedOffset = false;
@@ -107,15 +127,14 @@ public:
 
 public:
 
-    Action(
+    CombatAction(
             ActionIndex actionTypeIndex,
             Creature* invokingCreature,
-            Creature* targetedCreature,
-            Item* itemToUse = nullptr
+            Creature* targetedCreature
         );
-    Action(const Action& ref);
+    CombatAction(const CombatAction& ref);
 
-    ~Action();
+    ~CombatAction();
 
 protected:
 
@@ -130,11 +149,6 @@ public:
     /* Returns string literal of action description */
     const char* description() const;
 
-protected:
-
-    /* Return dice roll by invoking creature */
-    float _get_roll();
-
 private:
 
     /* Run action
@@ -144,22 +158,16 @@ private:
     apply_scale() followed by apply_offset() */
 
     /* Calcualte result if action type is STRIKE */
-    void _strike(float multiplier = 1.0f);
+    void _strike(float roll);
 
     /* Calculate result if action type is MEDITATE */
-    void _meditate(float multiplier = 1.0f);
+    void _meditate(float roll);
 
     /* Calculate result if action type is BRACE */
-    void _brace(float multiplier = 1.0f);
+    void _brace(float roll);
 
     /* Calculate result if action type is DODGE */
-    void _dodge(float multiplier = 1.0f);
-
-    /* Roll for escape chance */
-    void _escape(float multiplier = 1.0f);
-
-    /* Roll for catch chance */
-    void _catch(float multiplier = 1.0f);
+    void _dodge(float roll);
 
     /* Do nothing */
     void _pass();
@@ -167,13 +175,10 @@ private:
     /* Calculate result if action type is INNERPEACE */
     void _inner_peace();
 
-    // /* Use item on target */
-    // void _use_item();
-
 public:
 
     /* Run the action and calculate result */
-    void process(float multiplier = 1.0f);
+    void process(float roll);
 
     /* Apply result to Creatures */
     
@@ -186,21 +191,21 @@ public:
     void apply_offset();
 };
 
-class ActionPair
-{
+// class ActionPair
+// {
 
-public:
+// public:
 
-    ActionPair();
-    ActionPair(const ActionPair& ref);
+//     ActionPair();
+//     ActionPair(const ActionPair& ref);
 
-    ~ActionPair();
+//     ~ActionPair();
 
-public:
+// public:
 
-    void process();
+//     void process();
 
-};
+// };
 
 };
 

@@ -35,7 +35,6 @@ public:
     float rollMinOffset = 0;
     float rollMaxOffset = 0;
 
-
 public:
 
     CreatureModifier();
@@ -55,6 +54,10 @@ public:
 
 class Creature : public TieredObjectBase
 {
+
+protected:
+
+    static inline int uidIndex = 0;
 
 public:
 
@@ -88,7 +91,7 @@ public:
 
 public:
 
-    Creature(int uidNum, TierIndex tierNum);
+    Creature(TierIndex tierNum);
     Creature(const Creature& ref);
 
     ~Creature();

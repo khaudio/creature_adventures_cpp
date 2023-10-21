@@ -107,11 +107,6 @@ public:
 class DeckBuilder : public DeckBase
 {
 
-protected:
-
-    /* UIDs for cards in a decks begin with 1, rather than 0 */
-    int uidIndex = 1;
-
 public:
 
     DeckBuilder();
@@ -126,7 +121,6 @@ protected:
 
     /* Create and return a new creature */
     Creature _create_creature(
-        int uidNum,
         TierIndex tierNum,
         float maxPossibleStatPoints,
         float weightVariance

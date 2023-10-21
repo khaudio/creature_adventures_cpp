@@ -7,11 +7,11 @@ Player::Player(int playerUidNum, bool isHuman) :
 _human(isHuman),
 uid(playerUidNum)
 {
-    std::copy(
-            Action::types.begin(),
-            Action::types.end(),
-            this->_availableActions.begin()
-        );
+    // std::copy(
+    //         Action::types.begin(),
+    //         Action::types.end(),
+    //         this->_availableActions.begin()
+    //     );
     this->creatures.reserve(3);
 }
 

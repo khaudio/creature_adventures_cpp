@@ -21,14 +21,15 @@ evasivenessOffset(ref.evasivenessOffset),
 rollMinOffset(ref.rollMinOffset),
 rollMaxOffset(ref.rollMaxOffset)
 {
+    this->uid = CreatureModifier::uidIndex++;
 }
 
 CreatureModifier::~CreatureModifier()
 {
 }
 
-Creature::Creature(int uidNum, TierIndex tierNum) :
-TieredObjectBase(uidNum, tierNum),
+Creature::Creature(TierIndex tierNum) :
+TieredObjectBase(Creature::uidIndex++, tierNum),
 owner(""),
 baseName(""),
 nickname("")
@@ -283,10 +284,20 @@ void Creature::decrement_modifiers()
 {
     for (CreatureModifier modifier: this->modifiers)
     {
-        if (--modifier.numTurns <= 0)
+        if (!modifier.persistent)
+        {
+            --modifier.numTurns;
+        }
+        if (modifier.numTurns == 0)
         {
             remove_modifier(modifier);
         }
+        #if _DEBUG
+        else if (modifier.numTurns < 0)
+        {
+            throw std::out_of_range("numTurns should be >= 0");
+        }
+        #endif
     }
 }
 

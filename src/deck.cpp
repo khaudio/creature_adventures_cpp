@@ -76,8 +76,7 @@ DeckBase()
 }
 
 DeckBuilder::DeckBuilder(const DeckBuilder& ref) :
-DeckBase(ref),
-uidIndex(ref.uidIndex)
+DeckBase(ref)
 {
 }
 
@@ -86,13 +85,12 @@ DeckBuilder::~DeckBuilder()
 }
 
 Creature DeckBuilder::_create_creature(
-        int uidNum,
         TierIndex tierNum,
         float maxPossibleStatPoints,
         float weightVariance
     )
 {
-    Creature newCreature(uidNum, tierNum);
+    Creature newCreature(tierNum);
 
     /* Calculate total stat points available for this creature */
     std::uniform_real_distribution<float> dist(
@@ -179,7 +177,6 @@ Deck<Creature> DeckBuilder::create_creature_deck(
         for (int j(0); j < cardsPerTier[tier]; ++j)
         {
             deck.emplace_back(_create_creature(
-                    this->uidIndex++,
                     tier,
                     maxPossibleStatPoints,
                     weightVariance
@@ -214,7 +211,6 @@ Deck<Item> DeckBuilder::_create_single_item_deck(
         for (int i(0); i < cardsPerTier[tier]; ++i)
         {
             deck.emplace_back(Item(
-                    this->uidIndex++,
                     tier,
                     itemTypeIndex,
                     maxPossibleStatPoints,
@@ -288,7 +284,6 @@ Deck<Item> DeckBuilder::create_item_deck(
         {
             case (0):
                 potions.emplace_back(Item(
-                        this->uidIndex++,
                         COMMON,
                         POTION,
                         maxPossibleStatPoints,
@@ -297,7 +292,6 @@ Deck<Item> DeckBuilder::create_item_deck(
                 break;
             case (1):
                 elixirs.emplace_back(Item(
-                        this->uidIndex++,
                         COMMON,
                         ELIXIR,
                         maxPossibleStatPoints,

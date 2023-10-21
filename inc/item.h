@@ -21,6 +21,10 @@ enum ItemIndex
 class Item : public TieredObjectBase
 {
 
+protected:
+
+    static inline int uidIndex = 0;
+
 public:
 
     static constexpr const int numTypes = 5;
@@ -44,7 +48,7 @@ public:
     static constexpr const std::array<const char*, Item::numTypes> descriptions = {
             "Heals a creature for a specified amount",
             "Poisons an enemy creature for unmitigated damage",
-            "Raises attack or defense power of a creature",
+            "Raises attack power of a creature until it reaches 0 HP",
             "Revives a creature with depleted HP",
             "Raises chances of successfully catching wild creatures",
         };
@@ -75,7 +79,6 @@ public:
 public:
 
     Item(
-            int uidNum,
             TierIndex tierNum,
             ItemIndex itemTypeIndex,
             float maxPossibleValue,

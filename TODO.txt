@@ -9,6 +9,7 @@
     - add scaler on getters
 
 - action
+    - external rolls for action processing
     - change Action to CombatAction
     - add NonCombatAction and have INNERPEACE in both
         - or have Action base class that has INNERPEACE in it's types

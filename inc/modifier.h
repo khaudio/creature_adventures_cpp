@@ -9,6 +9,7 @@ class ModifierBase;
 
 class ModifierBase
 {
+
 protected:
 
     static inline int uidIndex = 0;
@@ -19,7 +20,8 @@ public:
 
     bool persistent = false;
 
-    /* Lifetime of the  */
+    /* Lifetime of the modifier
+    in number of actions performed */
     int numTurns = 1;
 
 public:

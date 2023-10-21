@@ -3,23 +3,21 @@
 namespace CreatureAdventures
 {
 
-Action::Action(
+CombatAction::CombatAction(
         ActionIndex actionTypeIndex,
         Creature* invokingCreature,
-        Creature* targetedCreature,
-        Item* itemToUse
+        Creature* targetedCreature
     ) :
 type(actionTypeIndex),
 invoker(invokingCreature),
-target(targetedCreature),
-_item(itemToUse)
+target(targetedCreature)
 {
     #if _DEBUG
     _validate_type();
     #endif
 }
 
-Action::Action(const Action& ref) :
+CombatAction::CombatAction(const CombatAction& ref) :
 type(ref.type),
 invokerHPScale(ref.invokerHPScale),
 targetHPScale(ref.targetHPScale),
@@ -35,54 +33,34 @@ target(ref.target)
     #endif
 }
 
-Action::~Action()
+CombatAction::~CombatAction()
 {
 }
 
-void Action::_validate_type()
+void CombatAction::_validate_type()
 {
     auto iter = std::find(
-            Action::types.begin(),
-            Action::types.end(),
+            CombatAction::types.begin(),
+            CombatAction::types.end(),
             this->type
         );
     if (iter == types.end())
     {
         throw std::out_of_range("Action type index not found");
     }
-    if (
-                (this->type == USEITEM)
-                && (this->_item == nullptr)
-            )
-    {
-        throw std::invalid_argument("No item assigned");
-    }
 }
 
-const char* Action::name() const
+const char* CombatAction::name() const
 {
-    return Action::names.at(this->type);
+    return CombatAction::names.at(this->type);
 }
 
-const char* Action::description() const
+const char* CombatAction::description() const
 {
-    return Action::descriptions.at(this->type);
+    return CombatAction::descriptions.at(this->type);
 }
 
-float Action::_get_roll()
-{
-    float rollValueMin(0.0), rollValueMax(1.0);
-
-    // for (const auto& modifier: invoker->modifiers)
-    // {
-    //     rollValueMin += modifier.rollMinModifier;
-    //     rollValueMax += modifier.rollMaxModifier;
-    // }
-
-    return random_multiplier_roll<float>(rollValueMin, rollValueMax);
-}
-
-void Action::_strike(float multiplier)
+void CombatAction::_strike(float roll)
 {
     #if _DEBUG
     if (this->type != STRIKE)
@@ -91,26 +69,37 @@ void Action::_strike(float multiplier)
     }
     #endif
 
-    float roll(_get_roll() * multiplier);
+    if (roll < this->target->get_evasiveness())
+    {
+        /* Target evades */
+        this->evaded = true;
 
-    if (roll < 0.12f)
+        DEBUG_OUT(this->target->uid << " evaded " << this->invoker->uid << '\n');
+    }
+    else if (roll < 0.07f)
     {
         /* Miss */
         this->evaded = true;
 
         DEBUG_OUT(this->invoker->uid << " misses " << this->target->uid << '\n');
     }
-    else if ((0.12f <= roll) && (roll < 0.2f))
+    else if ((0.07f <= roll) && (roll < 0.17f))
     {
         /* Deflected hit with counterstrike by target */
-        this->targetHPOffset -= (
+        float damageToTarget = (
                 this->invoker->get_attack()
                 - this->target->get_defense()
             );
-        this->invokerHPOffset -= (
+        float damageToInvoker = (
                 this->target->get_attack()
                 - this->invoker->get_defense()
             );
+
+        trim_minimum<float>(&damageToTarget, 0);
+        trim_minimum<float>(&damageToInvoker, 0);
+
+        this->targetHPOffset -= damageToTarget;
+        this->invokerHPOffset -= damageToInvoker;
 
         DEBUG_OUT(this->invoker->uid << " hits " << this->target->uid);
         DEBUG_OUT(" (deflected) for " << this->targetHPOffset << " HP; ");
@@ -156,7 +145,7 @@ void Action::_strike(float multiplier)
     #endif
 }
 
-void Action::_meditate(float multiplier)
+void CombatAction::_meditate(float roll)
 {
     #if _DEBUG
     if (this->type != MEDITATE)
@@ -165,7 +154,6 @@ void Action::_meditate(float multiplier)
     }
     #endif
 
-    float roll(_get_roll() * multiplier);
     CreatureModifier modifier;
     modifier.numTurns = 2;
 
@@ -213,7 +201,7 @@ void Action::_meditate(float multiplier)
     }
 }
 
-void Action::_brace(float multiplier)
+void CombatAction::_brace(float roll)
 {
     #if _DEBUG
     if (this->type != BRACE)
@@ -222,7 +210,6 @@ void Action::_brace(float multiplier)
     }
     #endif
 
-    float roll(_get_roll() * multiplier);
     CreatureModifier modifier;
     modifier.numTurns = 2;
 
@@ -271,7 +258,7 @@ void Action::_brace(float multiplier)
 
 }
 
-void Action::_dodge(float multiplier)
+void CombatAction::_dodge(float roll)
 {
     #if _DEBUG
     if (this->type != DODGE)
@@ -280,7 +267,7 @@ void Action::_dodge(float multiplier)
     }
     #endif
 
-    float roll(_get_roll() * multiplier * invoker->get_evasiveness());
+    roll *= invoker->get_evasiveness();
 
     DEBUG_OUT(this->invoker->uid << " dodges");
     if ((0 <= roll) && (roll < 0.6f))
@@ -306,27 +293,14 @@ void Action::_dodge(float multiplier)
     #endif
 }
 
-void Action::_escape(float multiplier)
-{
-    float roll(_get_roll() * multiplier * invoker->get_evasiveness());
-
-}
-
-void Action::_catch(float multiplier)
-{
-    float roll(_get_roll() * multiplier);
-
-
-}
-
-void Action::_pass()
+void CombatAction::_pass()
 {
     #if _DEBUG
     DEBUG_OUT(this->invoker->uid << " passes\n");
     #endif
 }
 
-void Action::_inner_peace()
+void CombatAction::_inner_peace()
 {
     #if _DEBUG
     if (this->type != INNERPEACE)
@@ -341,27 +315,21 @@ void Action::_inner_peace()
     DEBUG_OUT(" for " << (this->invoker->get_max_hp() * 0.5f) << '\n');
 }
 
-void Action::process(float multiplier)
+void CombatAction::process(float roll)
 {
     switch (this->type)
     {
         case (STRIKE):
-            _strike(multiplier);
+            _strike(roll);
             break;
         case (MEDITATE):
-            _meditate(multiplier);
+            _meditate(roll);
             break;
         case (BRACE):
-            _brace(multiplier);
+            _brace(roll);
             break;
         case (DODGE):
-            _dodge(multiplier);
-            break;
-        case (ESCAPE):
-            _escape(multiplier);
-            break;
-        case (CATCH):
-            _catch(multiplier);
+            _dodge(roll);
             break;
         case (PASS):
             _pass();
@@ -369,13 +337,10 @@ void Action::process(float multiplier)
         case (INNERPEACE):
             _inner_peace();
             break;
-        // case (USEITEM):
-        //     _use_item();
-        //     break;
     }
 }
 
-void Action::apply_scale()
+void CombatAction::apply_scale()
 {
     if (this->_appliedScale)
     {
@@ -391,7 +356,7 @@ void Action::apply_scale()
     this->_appliedScale = true;
 }
 
-void Action::apply_offset()
+void CombatAction::apply_offset()
 {
     if (this->_appliedOffset)
     {
@@ -406,32 +371,5 @@ void Action::apply_offset()
 
     this->_appliedOffset = true;
 }
-
-
-// void PlayerAction::_use_item()
-// {
-//     switch (this->_item->type)
-//     {
-//         case (POTION):
-//             this->targetHPOffset += this->_item->value;
-//             break;
-//         case (POISON):
-//             this->targetHPOffset += this->_item->value;
-//             break;
-//         case (ELIXIR):
-            
-//             break;
-//         case (REVIVE):
-//             this->targetHPOffset += this->target->get_max_hp();
-//             break;
-//         case (BAIT):
-//             break;
-//     }
-// }
-
-// void PlayerAction::apply()
-// {
-
-// }
 
 };

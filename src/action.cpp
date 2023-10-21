@@ -109,10 +109,13 @@ void CombatAction::_strike(float roll)
     else if ((0.17f <= roll) && (roll < 0.89f))
     {
         /* Deflected hit */
-        this->targetHPOffset -= (
+        float damageToTarget = (
                 this->invoker->get_attack()
                 - this->target->get_defense()
             );
+
+        trim_minimum<float>(&damageToTarget, 0);
+        this->targetHPOffset -= damageToTarget;
 
         DEBUG_OUT(this->invoker->uid << " hits " << this->target->uid);
         DEBUG_OUT(" (deflected) for " << this->targetHPOffset << " HP\n");
@@ -128,10 +131,13 @@ void CombatAction::_strike(float roll)
     else if (0.97f <= roll)
     {
         /* Critical hit */
-        this->targetHPOffset -= (
+        float damageToTarget = (
                 (this->invoker->get_attack() * 2.0f)
                 - this->target->get_defense()
             );
+
+        trim_minimum<float>(&damageToTarget, 0);
+        this->targetHPOffset -= damageToTarget;
 
         DEBUG_OUT(this->invoker->uid << " hits " << this->target->uid);
         DEBUG_OUT(" (critical) for " << this->targetHPOffset << " HP\n");

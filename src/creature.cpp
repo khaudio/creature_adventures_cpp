@@ -192,24 +192,15 @@ float Creature::get_max_hp() const
 
 void Creature::set_hp(float value)
 {
-    float maxHP(get_max_hp());
-    if (value >= maxHP)
-    {
-        this->_currentHP = maxHP;
-    }
-    else if (value <= 0.0f)
-    {
-        this->_currentHP = 0;
-    }
-    else
-    {
-        this->_currentHP = std::round(value);
-    }
+    float trimmed(value);
+    trim_minimum<float>(&trimmed, 0);
+    trim_maximum<float>(&trimmed, get_max_hp());
+    this->_currentHP = std::round(trimmed);
 }
 
 float Creature::get_hp() const
 {
-    return std::round(this->_currentHP);
+    return this->_currentHP;
 }
 
 void Creature::_set_persistent_evasiveness(float value)
@@ -281,15 +272,20 @@ void Creature::remove_modifier(const CreatureModifier& modifier)
 
 void Creature::decrement_modifiers()
 {
+    bool shrink(false);
     for (CreatureModifier modifier: this->modifiers)
     {
-        if (!modifier.persistent)
-        {
-            --modifier.numTurns;
-        }
-        if (modifier.numTurns == 0)
+        --modifier.numTurns;
+        if (
+                (modifier.numTurns == 0)
+                || ((!modifier.persistent) && (!get_hp()))
+            )
         {
             remove_modifier(modifier);
+            shrink = true;
+
+            DEBUG_OUT("Removing expired modifier from " << this->uid << '\n');
+
         }
         #if _DEBUG
         else if (modifier.numTurns < 0)
@@ -298,11 +294,11 @@ void Creature::decrement_modifiers()
         }
         #endif
     }
-}
 
-void Creature::heal(float value)
-{
-    set_hp(value);
+    if (shrink)
+    {
+        this->modifiers.shrink_to_fit();
+    }
 }
 
 };

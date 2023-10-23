@@ -1,27 +1,16 @@
 # TODO
 
-- deck
-    - distribute points to items per tier (currently all at max)
-    - add baseEvasiveness to creature creation
+- add actionbase in its own header
+    - to avoid circular import with action.h and player.h
+        - ActionIndex enum and _availableActions
+    - or separate player more or something
 
-- creature
-    - change member variables from "modifier" to "scaler" or "offset"
-    - add scaler on getters
-
-- action
-    - external rolls for action processing
-    - change Action to CombatAction
-    - add NonCombatAction and have INNERPEACE in both
-        - or have Action base class that has INNERPEACE in it's types
-        - both inherit from base
-    - add evade chance to every roll
-        - based on target->get_evasiveness()
-        - maybe change strike thresholds to subtract some fraction of evasiveness
-    - remove scale/offsets if needed once implemented in creature
+-actionpair
     - add players for catch chance, etc
         - maybe subclass it
-    - implement catch, escape, rest of items
-    - trim action deltas when applied
+    - implement catch, escape, use item, etc
 
 - json state save
+
 - core class for decks
+

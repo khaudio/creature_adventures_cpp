@@ -18,11 +18,18 @@ public:
 
     int uid;
 
+    /* Whether modifier persists through
+    revival after HP is depleted */
     bool persistent = false;
 
     /* Lifetime of the modifier
-    in number of actions performed */
-    int numTurns = 1;
+    in number of actions performed 
+    if persistent is false.
+
+    Set to (n + 1), as it
+    should immediately decrement on
+    the same turn it is applied. */
+    int numTurns = 4;
 
 public:
 

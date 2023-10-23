@@ -23,7 +23,7 @@ class DeckBase
 
 protected:
 
-    std::mt19937_64 _randGenerator;
+    std::mt19937_64 _randGenerator; 
 
 public:
 

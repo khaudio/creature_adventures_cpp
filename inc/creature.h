@@ -140,8 +140,6 @@ public:
 
     void decrement_modifiers();
 
-    void heal(float value);
-
 };
 
 };

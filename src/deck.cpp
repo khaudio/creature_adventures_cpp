@@ -111,8 +111,24 @@ Creature DeckBuilder::_create_creature(
 
     /* Assign base HP value */
     newCreature.baseMaxHP = std::round(remainingStatPoints * weight);
-    newCreature.heal(newCreature.baseMaxHP);
+    newCreature.set_hp(newCreature.baseMaxHP);
     remainingStatPoints -= newCreature.baseMaxHP;
+
+    /* Maximum possible evasiveness is 1.0;
+    maximum assigned evasiveness must be much lower */
+    float maxBaseEvasiveness(0.18);
+
+    /* Assign evasiveness using
+    up to 20% of remaining stat points */
+    std::negative_binomial_distribution<> evadeDist(100, 0.82);
+    newCreature.baseEvasiveness = (
+            maxBaseEvasiveness
+            * (evadeDist(this->_randGenerator) / 100.0f)
+        );
+    remainingStatPoints -= (
+            (maxBaseEvasiveness * remainingStatPoints)
+            * (1.0f - newCreature.baseEvasiveness)
+        );
 
     /* Determine attack weighting */
     dist = std::uniform_real_distribution<float>(0.54f, 0.88f);
@@ -124,9 +140,6 @@ Creature DeckBuilder::_create_creature(
 
     /* Give remaining points to defense */
     newCreature.baseDefense = std::round(remainingStatPoints);
-
-    /* Evasiveness */
-    newCreature.baseEvasiveness = 0.05f;
 
     return newCreature;
 }

@@ -3,6 +3,22 @@
 namespace CreatureAdventures
 {
 
+void decrement_creature_modifiers()
+{
+    /* Empty function for variadic template */
+}
+
+template <typename T, typename... Types>
+void decrement_creature_modifiers(T* c, Types... creatures)
+{
+    c->decrement_modifiers();
+    decrement_creature_modifiers(creatures...);
+}
+
+CombatAction::CombatAction()
+{
+}
+
 CombatAction::CombatAction(
         ActionIndex actionTypeIndex,
         Creature* invokingCreature,
@@ -376,6 +392,51 @@ void CombatAction::apply_offset()
     }
 
     this->_appliedOffset = true;
+}
+
+CombatActionPair::CombatActionPair() :
+std::pair<CombatAction*, CombatAction*>()
+{
+}
+
+CombatActionPair::CombatActionPair(
+        CombatAction* firstAction,
+        CombatAction* secondAction
+    ) :
+std::pair<CombatAction*, CombatAction*>(firstAction, secondAction)
+{
+}
+
+CombatActionPair::CombatActionPair(const CombatActionPair& ref) :
+std::pair<CombatAction*, CombatAction*>(ref)
+{
+}
+
+CombatActionPair::~CombatActionPair()
+{
+}
+
+void CombatActionPair::execute()
+{
+    this->first->process(random_multiplier_roll<float>(0.0f, 1.0f));
+    this->second->process(random_multiplier_roll<float>(0.0f, 1.0f));
+
+    this->first->evaded = this->second->evasive;
+    this->second->evasive = this->first->evaded;
+
+    this->first->apply_scale();
+    this->second->apply_scale();
+
+    this->first->apply_offset();
+    this->second->apply_offset();
+
+    decrement_creature_modifiers(
+            this->first->invoker,
+            this->first->target,
+            this->second->invoker,
+            this->second->target
+        );
+
 }
 
 };

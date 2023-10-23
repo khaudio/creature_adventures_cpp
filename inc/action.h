@@ -4,9 +4,9 @@
 #include "dice.h"
 #include "creature.h"
 #include "item.h"
-#include "player.h"
 
 #include <memory>
+#include <set>
 
 namespace CreatureAdventures
 {
@@ -16,9 +16,9 @@ class CombatAction;
 class NonCombatAction;
 class ActionPair;
 
-/* Actions are taken by creatures to cause
-damage or healing during battles.
-Some actions may be used outside of battle */
+void decrement_creature_modifiers();
+template <typename T, typename... Types>
+void decrement_creature_modifiers(T* c, Types... creatures);
 
 class NonCombatAction
 {
@@ -127,6 +127,7 @@ public:
 
 public:
 
+    CombatAction();
     CombatAction(
             ActionIndex actionTypeIndex,
             Creature* invokingCreature,
@@ -191,21 +192,20 @@ public:
     void apply_offset();
 };
 
-// class ActionPair
-// {
+class CombatActionPair : public std::pair<CombatAction*, CombatAction*>
+{
 
-// public:
+public:
 
-//     ActionPair();
-//     ActionPair(const ActionPair& ref);
+    CombatActionPair();
+    CombatActionPair(CombatAction* firstAction, CombatAction* secondAction);
+    CombatActionPair(const CombatActionPair& ref);
 
-//     ~ActionPair();
+    ~CombatActionPair();
 
-// public:
+    void execute();
 
-//     void process();
-
-// };
+};
 
 };
 

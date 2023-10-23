@@ -4,7 +4,6 @@
 #include "creature.h"
 #include "item.h"
 #include "artifact.h"
-#include "action.h"
 
 namespace CreatureAdventures
 {
@@ -18,10 +17,10 @@ public:
 
 };
 
+/* Players control creatures */
+
 class Player
 {
-
-/* Players control creatures */
 
 protected:
 
@@ -36,7 +35,7 @@ protected:
     Creature* _activeCreature = nullptr;
 
     /* Actions available to the player */
-    std::vector<ActionIndex> _availableActions = {
+    std::vector<ActionIndex> _availableActions;/* = {
             STRIKE,
             MEDITATE,
             BRACE,
@@ -46,7 +45,7 @@ protected:
             ESCAPE,
             CATCH,
             PASS,
-        };
+        };*/
 
     std::vector<PlayerModifier> _modifiers;
 

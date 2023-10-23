@@ -95,7 +95,7 @@ float Creature::get_attack() const
 
     for (const auto& mod: this->modifiers)
     {
-        scale += (1.0f - mod.attackScale);
+        scale += (mod.attackScale - 1.0f);
         offset += mod.attackOffset;
     }
 
@@ -136,7 +136,7 @@ float Creature::get_defense() const
 
     for (const auto& mod: this->modifiers)
     {
-        scale += (1.0f - mod.defenseScale);
+        scale += (mod.defenseScale - 1.0f);
         offset += mod.defenseOffset;
     }
 
@@ -177,7 +177,7 @@ float Creature::get_max_hp() const
 
     for (const auto& mod: this->modifiers)
     {
-        scale += (1.0f - mod.hpScale);
+        scale += (mod.hpScale - 1.0f);
         offset += mod.hpOffset;
     }
 
@@ -231,7 +231,7 @@ float Creature::get_evasiveness() const
 
     for (const auto& modifier: this->modifiers)
     {
-        scale += (1.0f - modifier.evasivenessScale);
+        scale += (modifier.evasivenessScale - 1.0f);
         offset += modifier.evasivenessOffset;
     }
 
@@ -273,7 +273,7 @@ void Creature::remove_modifier(const CreatureModifier& modifier)
 void Creature::decrement_modifiers()
 {
     bool shrink(false);
-    for (CreatureModifier modifier: this->modifiers)
+    for (CreatureModifier& modifier: this->modifiers)
     {
         --modifier.numTurns;
         if (
@@ -293,6 +293,8 @@ void Creature::decrement_modifiers()
             throw std::out_of_range("numTurns should be >= 0");
         }
         #endif
+        
+        DEBUG_OUT("modifier uid " << modifier.uid << " numTurns " << modifier.numTurns << '\n');
     }
 
     if (shrink)

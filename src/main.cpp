@@ -27,11 +27,11 @@ void print_creature_stats(const Creature& creature)
 {
     DEBUG_OUT('\t' << std::setw(4) << creature.uid << std::setw(15));
     DEBUG_OUT(Creature::tierNames[creature.tier] << std::setw(8));
-    DEBUG_OUT(creature.baseAttack << std::setw(4));
-    DEBUG_OUT(creature.baseDefense << std::setw(4));
-    DEBUG_OUT(creature.baseMaxHP << std::setw(10));
+    DEBUG_OUT(creature.get_attack() << std::setw(4));
+    DEBUG_OUT(creature.get_defense() << std::setw(4));
+    DEBUG_OUT(creature.get_max_hp() << std::setw(10));
     DEBUG_OUT(std::setprecision(2));
-    DEBUG_OUT((creature.baseEvasiveness * 100) << " %" << '\n');
+    DEBUG_OUT((creature.get_evasiveness() * 100) << " %" << '\n');
 }
 
 void print_item_stats(const Item& item)
@@ -128,7 +128,7 @@ int main(int argc, char** argv)
                 }
                 CreatureModifier mod;
                 mod.attackOffset += item.value;
-                mod.numTurns = 2;
+                mod.numTurns = 4; /* Lasts 3 turns */
                 creature1.add_modifier(mod);
                 action1.type = PASS;
                 
@@ -149,7 +149,7 @@ int main(int argc, char** argv)
                 }
                 CreatureModifier mod;
                 mod.attackOffset += item.value;
-                mod.numTurns = 2;
+                mod.numTurns = 4; /* Lasts 3 turns */
                 creature2.add_modifier(mod);
                 action2.type = PASS;
 

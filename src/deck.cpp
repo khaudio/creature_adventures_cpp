@@ -120,7 +120,7 @@ Creature DeckBuilder::_create_creature(
 
     /* Assign evasiveness using
     up to 20% of remaining stat points */
-    std::negative_binomial_distribution<> evadeDist(100, 0.82);
+    std::negative_binomial_distribution<> evadeDist(100, 0.75);
     newCreature.baseEvasiveness = (
             maxBaseEvasiveness
             * (evadeDist(this->_randGenerator) / 100.0f)

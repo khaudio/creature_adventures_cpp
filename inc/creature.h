@@ -55,7 +55,7 @@ public:
 class Creature : public TieredObjectBase
 {
 
-protected:
+public:
 
     static inline int uidIndex = 0;
 

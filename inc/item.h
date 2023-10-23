@@ -48,7 +48,7 @@ public:
     static constexpr const std::array<const char*, Item::numTypes> descriptions = {
             "Heals a creature for a specified amount",
             "Poisons an enemy creature for unmitigated damage",
-            "Raises attack power of a creature until it reaches 0 HP",
+            "Raises attack power of a creature",
             "Revives a creature with depleted HP",
             "Raises chances of successfully catching wild creatures",
         };

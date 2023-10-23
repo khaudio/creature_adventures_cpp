@@ -29,7 +29,7 @@ public:
     Set to (n + 1), as it
     should immediately decrement on
     the same turn it is applied. */
-    int numTurns = 4;
+    int numTurns = 0;
 
 public:
 

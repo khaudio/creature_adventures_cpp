@@ -430,12 +430,17 @@ void CombatActionPair::execute()
     this->first->apply_offset();
     this->second->apply_offset();
 
-    decrement_creature_modifiers(
+    std::set<Creature*> participants = {
             this->first->invoker,
             this->first->target,
             this->second->invoker,
             this->second->target
-        );
+        };
+
+    for (Creature* c: participants)
+    {
+        c->decrement_modifiers();
+    }
 
 }
 

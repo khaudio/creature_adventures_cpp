@@ -22,7 +22,6 @@ add_executable(${PROJECT_NAME}
     src/deck.cpp
     src/artifact.cpp
     src/player.cpp
-    src/battle.cpp
     src/core.cpp
     src/main.cpp
 )

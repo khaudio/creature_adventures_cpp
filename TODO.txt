@@ -1,16 +1,10 @@
 # TODO
 
-- add actionbase in its own header
-    - to avoid circular import with action.h and player.h
-        - ActionIndex enum and _availableActions
-    - or separate player more or something
-
--actionpair
-    - add players for catch chance, etc
-        - maybe subclass it
-    - implement catch, escape, use item, etc
+- move PlayerAction to player.h or its own file
+    - rename some action classes
+    - either move action pair or create something new
+    - maybe remove ActionBase
 
 - json state save
 
 - core class for decks
-

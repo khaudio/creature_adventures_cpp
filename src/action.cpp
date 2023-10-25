@@ -15,11 +15,11 @@ void decrement_creature_modifiers(T* c, Types... creatures)
     decrement_creature_modifiers(creatures...);
 }
 
-CombatAction::CombatAction()
+ActionBase::ActionBase()
 {
 }
 
-CombatAction::CombatAction(
+ActionBase::ActionBase(
         ActionIndex actionTypeIndex,
         Creature* invokingCreature,
         Creature* targetedCreature
@@ -28,21 +28,90 @@ type(actionTypeIndex),
 invoker(invokingCreature),
 target(targetedCreature)
 {
-    #if _DEBUG
-    _validate_type();
-    #endif
+}
+
+ActionBase::ActionBase(const ActionBase& ref) :
+type(ref.type),
+invoker(ref.invoker),
+target(ref.target)
+{
+}
+
+ActionBase::~ActionBase()
+{
+}
+
+void ActionBase::process(float roll)
+{
+}
+
+// PlayerAction::PlayerAction() :
+// ActionBase()
+// {
+// }
+
+// PlayerAction::PlayerAction(
+//         ActionIndex actionTypeIndex,
+//         Creature* invokingCreature,
+//         Creature* targetedCreature
+//     ) :
+// ActionBase(actionTypeIndex, invokingCreature, targetedCreature)
+// {
+// }
+
+// PlayerAction::PlayerAction(const PlayerAction& ref) :
+// ActionBase(ref)
+// {
+// }
+
+// PlayerAction::~PlayerAction()
+// {
+// }
+
+// void PlayerAction::process(float roll)
+// {
+//     switch (this->type)
+//     {
+//         case (SWITCH):
+//             _switch();
+//             break;
+//         case (FORFEIT):
+//             _forfeit();
+//             break;
+//         case (ESCAPE):
+//             _escape(roll);
+//             break;
+//         case (CATCH):
+//             _catch(roll);
+//             break;
+//         case (USEITEM):
+//             _use_item();
+//             break;
+//     }
+// }
+
+CombatAction::CombatAction() :
+ActionBase()
+{
+}
+
+CombatAction::CombatAction(
+        ActionIndex actionTypeIndex,
+        Creature* invokingCreature,
+        Creature* targetedCreature
+    ) :
+ActionBase(actionTypeIndex, invokingCreature, targetedCreature)
+{
 }
 
 CombatAction::CombatAction(const CombatAction& ref) :
-type(ref.type),
+ActionBase(ref),
 invokerHPScale(ref.invokerHPScale),
 targetHPScale(ref.targetHPScale),
 invokerHPOffset(ref.invokerHPOffset),
 targetHPOffset(ref.targetHPOffset),
 evasive(ref.evasive),
-evaded(ref.evaded),
-invoker(ref.invoker),
-target(ref.target)
+evaded(ref.evaded)
 {
     #if _DEBUG
     _validate_type();
@@ -318,6 +387,10 @@ void CombatAction::_dodge(float roll)
 void CombatAction::_pass()
 {
     #if _DEBUG
+    if (this->type != PASS)
+    {
+        throw std::logic_error("Invalid function for action type");
+    }
     DEBUG_OUT(this->invoker->uid << " passes\n");
     #endif
 }

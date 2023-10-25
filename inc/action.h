@@ -12,51 +12,49 @@ namespace CreatureAdventures
 {
 
 /* Declarations */
+class ActionBase;
 class CombatAction;
-class NonCombatAction;
+class PlayerAction;
 class ActionPair;
 
 void decrement_creature_modifiers();
 template <typename T, typename... Types>
 void decrement_creature_modifiers(T* c, Types... creatures);
 
-class NonCombatAction
+class ActionBase
 {
 
 public:
 
-    static constexpr const int numTypes = 6;
+    /* Which action is to be performed */
+    ActionIndex type;
 
-    static constexpr const std::array<ActionIndex, NonCombatAction::numTypes> types = {
-            SWITCH,
-            FORFEIT,
-            ESCAPE,
-            CATCH,
-            INNERPEACE,
-            USEITEM,
-        };
+    /* Creatuer invoking the action */
+    Creature* invoker = nullptr;
 
-    static constexpr const std::array<const char*, NonCombatAction::numTypes> names = {
-            "Switch",
-            "Forfeit",
-            "Escape",
-            "Catch",
-            "Inner Peace",
-            "Use Item",
-        };
+    /* Creature targeted by the action */
+    Creature* target = nullptr;
 
-    static constexpr const std::array<const char*, NonCombatAction::numTypes> descriptions = {
-            "Switch to another creature",
-            "Concede defeat and end the battle",
-            "Run from battle",
-            "Attempt to catch a wild creature",
-            "Heal for half max HP",
-            "Use an item",
-        };
+public:
+
+    ActionBase();
+    ActionBase(
+            ActionIndex actionTypeIndex,
+            Creature* invokingCreature,
+            Creature* targetedCreature
+        );
+    ActionBase(const ActionBase& ref);
+
+    ~ActionBase();
+
+public:
+
+    /* Run the action and calculate result */
+    virtual void process(float roll);
 
 };
 
-class CombatAction
+class CombatAction : public ActionBase
 {
 
 public:
@@ -87,7 +85,7 @@ public:
             "Chance to increase defense",
             "Chance to evade incoming attack",
             "Forego action",
-            "Heal for half max HP",
+            "Heal for half of max HP",
         };
 
 protected:
@@ -96,9 +94,6 @@ protected:
     bool _appliedOffset = false;
 
 public:
-
-    /* enum for which action is to be performed */
-    ActionIndex type;
 
     /* Values to scale HP by */
     float invokerHPScale = 1.0f;
@@ -118,12 +113,6 @@ public:
     /* Whether invoker failed to make contact
     or whether target evaded */
     bool evaded = false;
-
-    Creature* invoker = nullptr;
-    Creature* target = nullptr;
-
-    CreatureModifier* invokerModifier = nullptr;
-    CreatureModifier* targetModifier = nullptr;
 
 public:
 
@@ -179,7 +168,7 @@ private:
 public:
 
     /* Run the action and calculate result */
-    void process(float roll);
+    void process(float roll) override;
 
     /* Apply result to Creatures */
     
@@ -190,6 +179,7 @@ public:
 
     /* Apply offsets */
     void apply_offset();
+
 };
 
 class CombatActionPair : public std::pair<CombatAction*, CombatAction*>
@@ -207,6 +197,76 @@ public:
 
 };
 
-};
+// class PlayerAction : public ActionBase
+// {
+
+// public:
+
+//     static constexpr const int numTypes = 5;
+
+//     static constexpr const std::array<ActionIndex, PlayerAction::numTypes> types = {
+//             SWITCH,
+//             FORFEIT,
+//             ESCAPE,
+//             CATCH,
+//             USEITEM,
+//         };
+
+//     static constexpr const std::array<const char*, PlayerAction::numTypes> names = {
+//             "Switch",
+//             "Forfeit",
+//             "Escape",
+//             "Catch",
+//             "Use Item",
+//         };
+
+//     static constexpr const std::array<const char*, PlayerAction::numTypes> descriptions = {
+//             "Switch to another creature",
+//             "Concede defeat and end the battle",
+//             "Run from battle",
+//             "Attempt to catch a wild creature",
+//             "Use an item",
+//         };
+
+//     Item* item;
+
+// public:
+
+//     PlayerAction();
+//     PlayerAction(
+//             ActionIndex actionTypeIndex,
+//             Creature* invokingCreature,
+//             Creature* targetedCreature
+//         );
+//     PlayerAction(const PlayerAction& ref);
+
+//     ~PlayerAction();
+
+// protected:
+
+//     /* Switch active creatures */
+//     void _switch();
+
+//     /* Forfeit battle */
+//     void _forfeit();
+
+//     /* Attempt to escape battle */
+//     void _escape(float roll);
+
+//     /* Attempt to catch target creature */
+//     void _catch(float roll);
+
+//     /* Use item on target creature */
+//     void _use_item(Item* item);
+
+
+// public:
+
+//     /* Run the action and calculate result */
+//     void process(float roll) override;
+
+// };
 
 #endif
+
+};

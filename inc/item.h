@@ -53,14 +53,14 @@ public:
             "Raises chances of successfully catching wild creatures",
         };
 
-    /* Relative ratios of stat points available to items in each tier */
-    static constexpr const std::array<std::pair<float, float>, Item::numTypes> tierQualityThresholds = {{
-            {0.22f, 0.22f},
-            {0.34f, 0.34f},
-            {0.67f, 0.67f},
-            {0.80f, 0.80f},
-            {1.00f, 1.00f}
-        }};
+    // /* Relative ratios of stat points available to items in each tier */
+    // static constexpr const std::array<std::pair<float, float>, Item::numTypes> tierQualityThresholds = {{
+    //         {0.22f, 0.22f},
+    //         {0.34f, 0.34f},
+    //         {0.67f, 0.67f},
+    //         {0.80f, 0.80f},
+    //         {1.00f, 1.00f}
+    //     }};
 
 public:
 

@@ -17,8 +17,17 @@ persistent(isPersistent)
     _validate_type();
     #endif
 
+    /* Relative ratios of stat points available to items in each tier */
+    static constexpr const std::array<std::pair<float, float>, Item::numTypes> tierQualityThresholds = {{
+            {0.22f, 0.22f},
+            {0.34f, 0.34f},
+            {0.67f, 0.67f},
+            {0.80f, 0.80f},
+            {1.00f, 1.00f}
+        }};
+
     this->value = std::round(
-            this->tierQualityThresholds[this->tier].first
+            tierQualityThresholds[this->tier].first
             * static_cast<float>(maxPossibleValue)
         );
 }
